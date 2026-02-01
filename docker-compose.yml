@@ -11,7 +11,7 @@ services:
     container_name: awid-backend
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       - NODE_ENV=production
       - PORT=3000
@@ -49,7 +49,7 @@ services:
     container_name: awid-admin
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "8081:80"
     environment:
       - VITE_API_URL=http://backend:3000
     depends_on:
@@ -65,7 +65,7 @@ services:
     container_name: awid-postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       - POSTGRES_USER=${POSTGRES_USER:-awid_admin}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -88,7 +88,7 @@ services:
     container_name: awid-redis
     restart: unless-stopped
     ports:
-      - "6379:6379"
+      - "6380:6379"
     command: redis-server --appendonly yes --appendfsync everysec
     volumes:
       - redis_data:/data
@@ -102,14 +102,14 @@ services:
 
   # ==========================================
   # PGADMIN - Administration PostgreSQL
-  # Accessible sur le port 5050
+  # Accessible sur le port 5051
   # ==========================================
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: awid-pgadmin
     restart: unless-stopped
     ports:
-      - "5050:80"
+      - "5051:80"
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL:-admin@awid.dz}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
@@ -122,15 +122,15 @@ services:
 
   # ==========================================
   # MINIO - S3 Storage (Self-hosted)
-  # API sur 9000, Console sur 9001
+  # API sur 9002, Console sur 9003
   # ==========================================
   minio:
     image: minio/minio:latest
     container_name: awid-minio
     restart: unless-stopped
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - "9002:9000"
+      - "9003:9001"
     command: server /data --console-address ":9001"
     environment:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER:-awidminio}
