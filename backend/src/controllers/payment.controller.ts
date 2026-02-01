@@ -8,9 +8,7 @@ import { db } from '../database';
 import { payments, orders, customers } from '../database/schema';
 import { eq, and, desc, gte, lte, count, sum } from 'drizzle-orm';
 import { AppError } from '../utils/errors';
-import { PaymentService } from '../services/payment.service';
-
-const paymentService = new PaymentService();
+import paymentService from '../services/payment.service';
 
 // Route: paymentRoutes.get('/')
 export const list = async (req: Request, res: Response, next: NextFunction) => {
