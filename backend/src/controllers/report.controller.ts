@@ -4,7 +4,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 import { Request, Response, NextFunction } from 'express';
-import { ReportService } from '../services/report.service';
+import reportService from '../services/report.service';
 import { AuthRequest } from '../middlewares/auth.middleware';
 import { z } from 'zod';
 
@@ -32,10 +32,10 @@ const customerReportSchema = z.object({
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export class ReportController {
-  private reportService: ReportService;
+  private reportService: typeof reportService;
 
   constructor() {
-    this.reportService = new ReportService();
+    this.reportService = reportService;
   }
 
   /**
