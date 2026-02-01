@@ -1,0 +1,111 @@
+name: awid_livreur
+description: Application livreur AWID - Gestion des tournées et encaissements
+version: 3.0.0+1
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+
+  # Immutable Data
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
+
+  # Network
+  dio: ^5.4.0
+  connectivity_plus: ^5.0.2
+
+  # Local Database
+  drift: ^2.14.1
+  sqlite3_flutter_libs: ^0.5.18
+  path_provider: ^2.1.1
+  path: ^1.8.3
+
+  # Secure Storage
+  flutter_secure_storage: ^9.0.0
+
+  # Navigation
+  go_router: ^13.0.1
+
+  # UI
+  flutter_svg: ^2.0.9
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+  pull_to_refresh: ^2.0.0
+
+  # Utils
+  intl: ^0.18.1
+  url_launcher: ^6.2.2
+  package_info_plus: ^5.0.1
+  device_info_plus: ^9.1.1
+  permission_handler: ^11.1.0
+
+  # Maps & Location
+  geolocator: ^10.1.0
+  google_maps_flutter: ^2.5.3
+  # Alternative: flutter_map + latlong2
+
+  # Printing
+  esc_pos_printer: ^4.1.0
+  esc_pos_utils: ^1.1.0
+  blue_thermal_printer: ^1.2.3
+
+  # Notifications
+  firebase_core: ^2.24.2
+  firebase_messaging: ^14.7.10
+  flutter_local_notifications: ^16.3.0
+
+  # Signature
+  signature: ^5.4.1
+
+  # Camera
+  camera: ^0.10.5+7
+  image_picker: ^1.0.7
+
+  # Cupertino Icons
+  cupertino_icons: ^1.0.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Code Generation
+  build_runner: ^2.4.8
+  freezed: ^2.4.6
+  json_serializable: ^6.7.1
+  riverpod_generator: ^2.3.9
+  drift_dev: ^2.14.1
+
+  # Linting
+  flutter_lints: ^3.0.1
+
+  # Testing
+  mocktail: ^1.0.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/fonts/
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
