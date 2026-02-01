@@ -1,131 +1,143 @@
 # 🚀 Déploiement AWID v3.0 sur Coolify
 
-## Structure minimale requise
+## Déploiement en UN SEUL SERVICE
 
-```
-.
-├── backend/
-│   ├── Dockerfile          ⬅️ Fourni
-│   └── ... (ton code)
-├── admin/
-│   ├── Dockerfile          ⬅️ Fourni
-│   ├── nginx.conf          ⬅️ Fourni
-│   └── ... (ton code)
-├── mobile/
-│   └── ... (ton code Flutter - pas de Docker)
-├── docker-compose.yml      ⬅️ Fourni
-├── .env.example            ⬅️ Fourni
-├── .github/
-│   └── workflows/
-│       └── deploy.yml      ⬅️ Fourni (optionnel)
-└── DEPLOY.md               ⬅️ Ce fichier
-```
+Tu n'as besoin de créer qu'**UN SEUL** service dans Coolify.
 
-## 🚀 Déploiement rapide
+---
 
-### 1. Sur ton VPS (Coolify déjà installé)
+## ⚙️ Configuration Coolify
 
-```bash
-ssh root@TON_IP
-cd /data/coolify/services
-git clone https://github.com/meedihkm/mehdirepo.git awid-v3
-cd awid-v3
+### 1. Créer le service
 
-# Copier et configurer les variables
-cp .env.example .env
-nano .env
-# Remplis les mots de passe !
+- **Type** : `Public Repository`
+- **Repository URL** : `https://github.com/meedihkm/mehdirepo`
+- **Build Pack** : `Docker Compose`
+- **Port** : `3000` (port principal du backend)
+- **Docker Compose File** : `docker-compose.yml`
 
-# Lancer
-chmod +x scripts/setup.sh 2>/dev/null || true
-docker-compose up -d
-```
+### 2. Variables d'environnement
 
-### 2. Configurer Coolify
+Copie-colle ces variables dans Coolify :
 
-Dans l'interface Coolify (`http://TON_IP:8000`) :
-
-Crée 4 services Docker Compose :
-
-| Service | Docker Compose Path | Port | Domaine généré |
-|---------|---------------------|------|----------------|
-| backend | `./docker-compose.yml` | 3000 | `api-xxx.coolify.io` |
-| admin | `./docker-compose.yml` | 80 | `xxx.coolify.io` |
-| pgadmin | `./docker-compose.yml` | 80 | `db-xxx.coolify.io` |
-| minio | `./docker-compose.yml` | 9001 | `console-s3-xxx.coolify.io` |
-
-Colle le contenu de ton fichier `.env` dans l'onglet "Environment Variables" de chaque service.
-
-### 3. Vérifier
-
-- Backend : `https://api-xxx.coolify.io/health`
-- Admin : `https://xxx.coolify.io`
-- PGAdmin : `https://db-xxx.coolify.io`
-- MinIO : `https://console-s3-xxx.coolify.io`
-
-## 🔐 Variables d'environnement
-
-Copie `.env.example` → `.env` et modifie :
-
-```bash
-# Base de données (obligatoire)
-POSTGRES_PASSWORD=ton_mot_de_passe_fort
+```env
+# Base de données (obligatoire - change le mot de passe!)
+POSTGRES_USER=awid_admin
+POSTGRES_PASSWORD=ton_mot_de_passe_super_fort_ici
+POSTGRES_DB=awid_v3
 
 # PGAdmin (obligatoire)
-PGADMIN_EMAIL=ton@email.com
-PGADMIN_PASSWORD=ton_mot_de_passe
+PGADMIN_EMAIL=tonemail@exemple.com
+PGADMIN_PASSWORD=ton_mot_de_passe_pgadmin
 
-# JWT (obligatoire - génère des clés longues)
-JWT_SECRET=$(openssl rand -base64 64)
-JWT_REFRESH_SECRET=$(openssl rand -base64 64)
+# JWT (obligatoire - génère des clés longues avec: openssl rand -base64 64)
+JWT_SECRET=ta_cle_jwt_tres_longue_64_caracteres_minimum
+JWT_REFRESH_SECRET=ta_cle_refresh_differente_64_caracteres
 
 # MinIO (obligatoire)
-MINIO_ROOT_PASSWORD=ton_mot_de_passe_minio
+MINIO_ROOT_USER=awidminio
+MINIO_ROOT_PASSWORD=ton_mot_de_passe_minio_super_fort
+MINIO_BUCKET=awid-uploads
 ```
 
-## 📊 Services inclus
+### 3. Ports exposés automatiquement
 
-- **Backend** (Node.js) : API REST
-- **Admin** (React + Nginx) : Interface web
-- **PostgreSQL** : Base de données (persistent)
-- **Redis** : Cache (persistent AOF)
-- **PGAdmin** : Gestion BDD
-- **MinIO** : Stockage S3
-- **Backup** : Sauvegardes auto (2h du matin)
+Coolify va exposer ces ports sur ton VPS :
 
-## 🔧 Commandes utiles
+| Service | Port VPS | Accès | Description |
+|---------|----------|-------|-------------|
+| Backend API | `3000` | `http://TON_IP:3000` | API REST |
+| Admin | `8080` | `http://TON_IP:8080` | Interface admin |
+| PostgreSQL | `5432` | `http://TON_IP:5432` | Base de données |
+| **PGAdmin** | `5050` | `http://TON_IP:5050` | **Gestion BDD** ✅ |
+| Redis | `6379` | `http://TON_IP:6379` | Cache |
+| MinIO API | `9000` | `http://TON_IP:9000` | Stockage S3 |
+| **MinIO Console** | `9001` | `http://TON_IP:9001` | **Console S3** ✅ |
+
+---
+
+## 🔐 Accès après déploiement
+
+### PGAdmin (gestion base de données)
+- **URL** : `http://TON_IP:5050`
+- **Email** : ton `PGADMIN_EMAIL`
+- **Password** : ton `PGADMIN_PASSWORD`
+
+Pour te connecter à PostgreSQL dans PGAdmin :
+- Host : `postgres`
+- Port : `5432`
+- Database : `awid_v3`
+- User : `awid_admin`
+- Password : ton `POSTGRES_PASSWORD`
+
+### MinIO Console (stockage fichiers)
+- **URL** : `http://TON_IP:9001`
+- **Access Key** : `awidminio` (ou ton `MINIO_ROOT_USER`)
+- **Secret Key** : ton `MINIO_ROOT_PASSWORD`
+
+### API Backend
+- **URL** : `http://TON_IP:3000`
+- **Health check** : `http://TON_IP:3000/health`
+
+### Admin React
+- **URL** : `http://TON_IP:8080`
+
+---
+
+## ✅ Vérification
+
+Une fois déployé, vérifie que tout fonctionne :
+
+```bash
+# Sur ton VPS (SSH optionnel)
+docker ps
+
+# Tu dois voir 6 containers :
+# - awid-backend
+# - awid-admin
+# - awid-postgres
+# - awid-redis
+# - awid-pgadmin
+# - awid-minio
+```
+
+---
+
+## 🐛 Problèmes courants
+
+### "Port already in use"
+Change les ports dans le docker-compose.yml si déjà utilisés.
+
+### PostgreSQL ne démarre pas
+Vérifie que `POSTGRES_PASSWORD` est bien défini (pas vide).
+
+### Backend ne voit pas la DB
+Attends 30s que PostgreSQL soit prêt, puis redémarre le backend :
+```bash
+docker restart awid-backend
+```
+
+---
+
+## 📝 Commandes utiles (SSH si besoin)
 
 ```bash
 # Voir les logs
 docker logs -f awid-backend
 docker logs -f awid-postgres
 
-# Redémarrer
-docker-compose restart backend
+# Redémarrer un service
+docker restart awid-backend
 
-# Backup manuel
+# Backup BDD
 docker exec awid-postgres pg_dump -U awid_admin awid_v3 > backup.sql
 
-# Migrations
-docker-compose exec backend npm run migrate
-
-# Accès BDD
+# Entrer dans la BDD
 docker exec -it awid-postgres psql -U awid_admin -d awid_v3
 ```
 
-## 🐛 Problèmes courants
+---
 
-**PostgreSQL ne démarre pas** :
-```bash
-docker-compose down -v  # ⚠️ Supprime les données
-docker-compose up -d
-```
+## 🎉 C'est tout !
 
-**Backend ne voit pas la DB** :
-```bash
-docker-compose restart backend
-```
-
-**HTTPS ne marche pas** :
-- Dans Coolify, vérifie que "HTTPS" est activé pour chaque service
-- Attends 2-3 minutes que Let's Encrypt génère le certificat
+Un seul service Coolify = tout est déployé automatiquement.
