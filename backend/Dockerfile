@@ -6,7 +6,7 @@ WORKDIR /app
 RUN apk add --no-cache wget
 
 # Copie des fichiers de dépendances
-COPY package.json ./
+COPY package*.json ./
 
 # Installation des dépendances Node.js
 RUN npm install
@@ -14,8 +14,11 @@ RUN npm install
 # Copie du code source
 COPY . .
 
-# Build TypeScript (si nécessaire)
-RUN npm run build 2>/dev/null || echo "No build script"
+# Build TypeScript (obligatoire)
+RUN npm run build
+
+# Vérification que le build a créé les fichiers
+RUN ls -la dist/ || (echo "Build failed - dist folder not found" && exit 1)
 
 # Exposition du port
 EXPOSE 3000
