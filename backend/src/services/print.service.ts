@@ -498,3 +498,54 @@ export class PrintService {
 export const printService = new PrintService();
 
 export default printService;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FONCTIONS STANDALONE POUR COMPATIBILITÉ
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export async function generateDeliveryNotePDF(deliveryId: string): Promise<PrintResult> {
+  return printService.generateDeliveryNotePDF(deliveryId);
+}
+
+export async function generateReceiptPDF(paymentId: string): Promise<PrintResult> {
+  return printService.generateReceiptPDF(paymentId);
+}
+
+export async function generateStatementPDF(customerId: string, startDate?: Date, endDate?: Date): Promise<PrintResult> {
+  return printService.generateStatementPDF(customerId, startDate, endDate);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ALIAS POUR COMPATIBILITÉ
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const generateDeliveryNote = generateDeliveryNotePDF;
+export const generateOrderReceipt = generateReceiptPDF;
+export const generateStatement = generateStatementPDF;
+export const printDeliveryNote = generateDeliveryNotePDF;
+export const printReceipt = generateReceiptPDF;
+export const printStatement = generateStatementPDF;
+
+export const printServiceCompat = {
+  generateDeliveryNotePDF,
+  generateReceiptPDF,
+  generateStatementPDF,
+  generateDeliveryNote,
+  generateOrderReceipt,
+  generateStatement,
+  printDeliveryNote,
+  printReceipt,
+  printStatement,
+};
+
+export class PrintServiceStatic {
+  static generateDeliveryNotePDF = generateDeliveryNotePDF;
+  static generateReceiptPDF = generateReceiptPDF;
+  static generateStatementPDF = generateStatementPDF;
+  static generateDeliveryNote = generateDeliveryNotePDF;
+  static generateOrderReceipt = generateReceiptPDF;
+  static generateStatement = generateStatementPDF;
+  static printDeliveryNote = generateDeliveryNotePDF;
+  static printReceipt = generateReceiptPDF;
+  static printStatement = generateStatementPDF;
+}

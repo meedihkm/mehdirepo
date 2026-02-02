@@ -485,3 +485,27 @@ export default {
   getAccountStatement,
   reorderPreviousOrder,
 };
+
+export const customerAccountService = {
+  getProducts,
+  createOrder,
+  getOrders,
+  getOrderById,
+  cancelOrder,
+  getNotifications,
+  markNotificationRead,
+  markAllNotificationsRead,
+};
+
+export class CustomerAccountService {
+  static getProducts = getProducts;
+  static createOrder = createOrder;
+  static getOrders = getOrders;
+  static getOrderById = getOrderById;
+  static cancelOrder = cancelOrder;
+  static getNotifications = getNotifications;
+  static markNotificationRead = markNotificationRead;
+  static markAllNotificationsRead = markAllNotificationsRead;
+}
+
+export default customerAccountService;

@@ -471,9 +471,101 @@ export class SyncService {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// SINGLETON
+// FONCTIONS STANDALONE (pour compatibilité)
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const syncService = new SyncService();
+async function getInitialDownload(
+  delivererId: string,
+  organizationId: string,
+  date?: Date
+): Promise<{
+  deliveries: any[];
+  customers: any[];
+  products: any[];
+  myRoute: any[];
+}> {
+  return syncService.getInitialData(delivererId, organizationId, date);
+}
+
+async function processOfflineTransactions(
+  delivererId: string,
+  organizationId: string,
+  transactions: SyncPushTransaction[]
+): Promise<{
+  processed: string[];
+  failed: { id: string; error: string }[];
+}> {
+  return syncService.pushTransactions(delivererId, organizationId, transactions);
+}
+
+async function getUpdates(
+  delivererId: string,
+  organizationId: string,
+  lastSyncAt: Date,
+  entities: ('deliveries' | 'customers' | 'products' | 'payments')[] = ['deliveries', 'customers']
+): Promise<SyncPullResult> {
+  return syncService.pullUpdates(delivererId, organizationId, lastSyncAt, entities);
+}
+
+async function checkConflicts(
+  delivererId: string,
+  localData: any[],
+  serverData: any[]
+): Promise<{ entityId: string; local: any; server: any }[]> {
+  // TODO: Implémentation complète de la détection de conflits
+  const conflicts: { entityId: string; local: any; server: any }[] = [];
+  
+  for (const local of localData) {
+    const server = serverData.find((s: any) => s.id === local.id);
+    if (server && new Date(local.updatedAt) < new Date(server.updatedAt)) {
+      conflicts.push({
+        entityId: local.id,
+        local,
+        server,
+      });
+    }
+  }
+  
+  return conflicts;
+}
+
+async function resolveConflict(
+  entityType: 'delivery' | 'payment',
+  localData: any,
+  serverData: any,
+  strategy: 'server_wins' | 'client_wins' | 'merge' = 'server_wins'
+): Promise<any> {
+  return syncService.resolveConflict(entityType, localData, serverData, strategy);
+}
+
+async function getSyncStatus(delivererId: string): Promise<{
+  lastSyncAt: Date | null;
+  totalSyncs: number;
+  lastSyncStatus: string | null;
+}> {
+  return syncService.getSyncStatus(delivererId);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EXPORTS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const syncService = {
+  getInitialDownload,
+  processOfflineTransactions,
+  getUpdates,
+  checkConflicts,
+  resolveConflict,
+  getSyncStatus,
+};
+
+export class SyncServiceStatic {
+  static getInitialDownload = getInitialDownload;
+  static processOfflineTransactions = processOfflineTransactions;
+  static getUpdates = getUpdates;
+  static checkConflicts = checkConflicts;
+  static resolveConflict = resolveConflict;
+  static getSyncStatus = getSyncStatus;
+}
 
 export default syncService;

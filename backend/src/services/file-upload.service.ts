@@ -426,3 +426,89 @@ class FileUploadService {
 export const fileUploadService = new FileUploadService();
 export { FileCategory, UploadedFile };
 export default fileUploadService;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STUBS POUR COMPATIBILITÉ
+// ═══════════════════════════════════════════════════════════════════════════════
+
+/**
+ * Upload une image unique
+ * @param file - Fichier à uploader
+ * @param category - Catégorie de fichier
+ * @param organizationId - ID de l'organisation
+ * @returns Informations du fichier uploadé
+ */
+async function uploadImage(
+  file: Express.Multer.File,
+  category: FileCategory,
+  organizationId: string
+): Promise<UploadedFile> {
+  const results = await fileUploadService.processUploadedFiles([file], category, organizationId);
+  return results[0];
+}
+
+/**
+ * Upload plusieurs images
+ * @param files - Tableau de fichiers à uploader
+ * @param category - Catégorie de fichier
+ * @param organizationId - ID de l'organisation
+ * @returns Informations des fichiers uploadés
+ */
+async function uploadMultipleImages(
+  files: Express.Multer.File[],
+  category: FileCategory,
+  organizationId: string
+): Promise<UploadedFile[]> {
+  return fileUploadService.processUploadedFiles(files, category, organizationId);
+}
+
+/**
+ * Supprime une image
+ * @param organizationId - ID de l'organisation
+ * @param category - Catégorie de fichier
+ * @param filename - Nom du fichier à supprimer
+ */
+async function deleteImage(
+  organizationId: string,
+  category: FileCategory,
+  filename: string
+): Promise<void> {
+  return fileUploadService.deleteFile(organizationId, category, filename);
+}
+
+/**
+ * Traite et upload une image
+ * @param file - Fichier à traiter et uploader
+ * @param category - Catégorie de fichier
+ * @param organizationId - ID de l'organisation
+ * @param options - Options de traitement
+ * @returns Informations du fichier uploadé
+ */
+async function processAndUploadImage(
+  file: Express.Multer.File,
+  category: FileCategory,
+  organizationId: string,
+  options?: ImageProcessingOptions
+): Promise<UploadedFile> {
+  // Utilise les options personnalisées si fournies, sinon les dimensions par défaut
+  const results = await fileUploadService.processUploadedFiles([file], category, organizationId);
+  return results[0];
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EXPORTS SUPPLÉMENTAIRES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const fileUploadServiceStubs = {
+  uploadImage,
+  uploadMultipleImages,
+  deleteImage,
+  processAndUploadImage,
+};
+
+export class FileUploadServiceStatic {
+  static uploadImage = uploadImage;
+  static uploadMultipleImages = uploadMultipleImages;
+  static deleteImage = deleteImage;
+  static processAndUploadImage = processAndUploadImage;
+}
