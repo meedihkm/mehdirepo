@@ -408,3 +408,57 @@ export class ReportController {
 
 // Instance singleton
 export const reportController = new ReportController();
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STUBS - Additional Report Functions
+// ═══════════════════════════════════════════════════════════════════════════════
+
+import { asyncHandler } from '../middlewares/error.middleware';
+
+export const generateDailyReport = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'generateDailyReport (stub)',
+    data: {}
+  });
+});
+
+export const generateWeeklyReport = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'generateWeeklyReport (stub)',
+    data: {}
+  });
+});
+
+export const generateMonthlyReport = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'generateMonthlyReport (stub)',
+    data: {}
+  });
+});
+
+export const generateDelivererPerformanceReport = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'generateDelivererPerformanceReport (stub)',
+    data: {}
+  });
+});
+
+export const generateCustomerStatement = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'generateCustomerStatement (stub)',
+    data: {}
+  });
+});
+
+export const exportReport = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'exportReport (stub)',
+    data: {}
+  });
+});

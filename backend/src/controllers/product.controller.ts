@@ -235,6 +235,27 @@ export const deleteCategory = asyncHandler(async (req: Request, res: Response) =
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// STUBS pour compatibilité
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const reorderProducts = asyncHandler(async (req: Request, res: Response) => {
+  // Stub - à implémenter
+  res.json({
+    success: true,
+    message: 'Réorganisation des produits (stub)',
+  });
+});
+
+// STUB - getProductById
+export const getProductById = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'getProductById (stub)',
+    data: {}
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 

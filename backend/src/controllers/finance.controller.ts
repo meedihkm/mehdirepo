@@ -248,3 +248,17 @@ function findBucket(aging: any[], key: string) {
   const found = aging.find(a => a.bucket === key);
   return { count: found?.count || 0, total: Number(found?.total) || 0 };
 }
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STUB - getCashFlow
+// ═══════════════════════════════════════════════════════════════════════════════
+
+import { asyncHandler } from '../middlewares/error.middleware';
+
+export const getCashFlow = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'getCashFlow (stub)',
+    data: {}
+  });
+});

@@ -656,6 +656,68 @@ function calculateOrderTotal(
   return 0;
 }
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// STUBS - Admin Customer Management
+// ═══════════════════════════════════════════════════════════════════════════════
+
+import { asyncHandler } from '../middlewares/error.middleware';
+
+export const listCustomers = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'listCustomers (stub)',
+    data: {}
+  });
+});
+
+export const createCustomer = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'createCustomer (stub)',
+    data: {}
+  });
+});
+
+export const getCustomerById = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'getCustomerById (stub)',
+    data: {}
+  });
+});
+
+export const updateCustomer = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'updateCustomer (stub)',
+    data: {}
+  });
+});
+
+export const deleteCustomer = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'deleteCustomer (stub)',
+    data: {}
+  });
+});
+
+export const getCustomerPayments = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'getCustomerPayments (stub)',
+    data: {}
+  });
+});
+
+export const updateCustomerCreditLimit = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'updateCustomerCreditLimit (stub)',
+    data: {}
+  });
+});
+
 export const customerController = {
   requestOtp,
   verifyOtp,
@@ -671,4 +733,11 @@ export const customerController = {
   getNotifications,
   markNotificationRead,
   markAllNotificationsRead,
+  listCustomers,
+  createCustomer,
+  getCustomerById,
+  updateCustomer,
+  deleteCustomer,
+  getCustomerPayments,
+  updateCustomerCreditLimit,
 };

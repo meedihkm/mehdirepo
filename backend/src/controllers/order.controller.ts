@@ -152,6 +152,18 @@ export const duplicateOrder = asyncHandler(async (req: Request, res: Response) =
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// STUB - getOrderById
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const getOrderById = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'getOrderById (stub)',
+    data: {}
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -164,4 +176,5 @@ export default {
   updateOrderStatus,
   cancelOrder,
   duplicateOrder,
+  getOrderById,
 };

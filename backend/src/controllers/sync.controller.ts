@@ -107,6 +107,18 @@ export const checkConflicts = asyncHandler(async (req: Request, res: Response) =
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// STUB - getInitialDownload
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const getInitialDownload = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'getInitialDownload (stub)',
+    data: {}
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -116,4 +128,5 @@ export default {
   pullUpdates,
   getSyncStatus,
   checkConflicts,
+  getInitialDownload,
 };

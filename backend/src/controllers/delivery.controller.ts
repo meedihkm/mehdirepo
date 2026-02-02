@@ -309,6 +309,26 @@ export const updatePosition = asyncHandler(async (req: Request, res: Response) =
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// STUBS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const getDelivererRoute = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'getDelivererRoute (stub)',
+    data: {}
+  });
+});
+
+export const getDeliveryById = asyncHandler(async (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: 'getDeliveryById (stub)',
+    data: {}
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -323,4 +343,6 @@ export default {
   failDelivery,
   collectDebt,
   updatePosition,
+  getDelivererRoute,
+  getDeliveryById,
 };

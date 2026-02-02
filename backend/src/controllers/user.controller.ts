@@ -54,6 +54,17 @@ export const list = async (req: Request, res: Response, next: NextFunction) => {
   } catch (error) { next(error); }
 };
 
+// Route: userRoutes.put('/:id/position')
+export const updateUserPosition = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    res.json({
+      success: true,
+      message: 'updateUserPosition (stub)',
+      data: {}
+    });
+  } catch (error) { next(error); }
+};
+
 // Route: userRoutes.post('/')
 export const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
