@@ -472,19 +472,8 @@ async function generateOrderNumber(organizationId: string): Promise<string> {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// EXPORTS
+// ALIASES ET EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
-
-export default {
-  getCustomerProfile,
-  getProductCatalog,
-  getMyOrders,
-  getOrderDetail,
-  createOrder,
-  cancelOrder,
-  getAccountStatement,
-  reorderPreviousOrder,
-};
 
 // Aliases pour compatibilité
 export const getProducts = getProductCatalog;

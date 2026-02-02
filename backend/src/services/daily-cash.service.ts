@@ -92,7 +92,7 @@ export const getDailyCash = async (
   const existing = await db.query.dailyCash.findFirst({
     where: and(
       eq(dailyCash.organizationId, organizationId),
-      eq(dailyCash.userId, oderId),
+      eq(dailyCash.userId, userId),
       eq(dailyCash.date, dateString)
     ),
   });
