@@ -486,11 +486,23 @@ export default {
   reorderPreviousOrder,
 };
 
+// Aliases pour compatibilité
+export const getProducts = getProductCatalog;
+export const getOrders = getMyOrders;
+export const getOrderById = getOrderDetail;
+
+// Fonctions stubs pour notifications (à implémenter)
+export const getNotifications = async (accountId: string, query?: any): Promise<any> => {
+  return { data: [], pagination: { page: 1, limit: 20, total: 0 } };
+};
+export const markNotificationRead = async (accountId: string, notificationId: string): Promise<void> => {};
+export const markAllNotificationsRead = async (accountId: string): Promise<void> => {};
+
 export const customerAccountService = {
-  getProducts,
+  getProducts: getProductCatalog,
   createOrder,
-  getOrders,
-  getOrderById,
+  getOrders: getMyOrders,
+  getOrderById: getOrderDetail,
   cancelOrder,
   getNotifications,
   markNotificationRead,
@@ -498,10 +510,10 @@ export const customerAccountService = {
 };
 
 export class CustomerAccountService {
-  static getProducts = getProducts;
+  static getProducts = getProductCatalog;
   static createOrder = createOrder;
-  static getOrders = getOrders;
-  static getOrderById = getOrderById;
+  static getOrders = getMyOrders;
+  static getOrderById = getOrderDetail;
   static cancelOrder = cancelOrder;
   static getNotifications = getNotifications;
   static markNotificationRead = markNotificationRead;

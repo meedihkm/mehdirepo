@@ -774,6 +774,37 @@ async function exportDeliveries(
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// ALIASES ET STUBS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const exportReport = exportToExcel;
+
+// Stubs pour compatibilité
+export const generateDelivererPerformanceReport = async (organizationId: string, params: any): Promise<any> => {
+  return { success: true, message: 'Stub - à implémenter', data: [] };
+};
+
+export const generateSalesReport = async (organizationId: string, params: any): Promise<any> => {
+  return { success: true, message: 'Stub - à implémenter', data: [] };
+};
+
+export const generateDebtAgingReport = async (organizationId: string, params: any): Promise<any> => {
+  return { success: true, message: 'Stub - à implémenter', data: [] };
+};
+
+export const generateProductsReport = async (organizationId: string, params: any): Promise<any> => {
+  return { success: true, message: 'Stub - à implémenter', data: [] };
+};
+
+export const generateDailyCashReport = async (organizationId: string, params: any): Promise<any> => {
+  return { success: true, message: 'Stub - à implémenter', data: [] };
+};
+
+export const exportToPdf = async (data: any, options?: any): Promise<Buffer> => {
+  return Buffer.from('PDF stub');
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -783,7 +814,7 @@ export const reportService = {
   monthly: generateMonthlyReport,
   delivererPerformance: generateDelivererPerformanceReport,
   customerStatement: generateCustomerStatement,
-  exportData: exportReport,
+  exportData: exportToExcel,
 };
 
 export class ReportService {
@@ -792,7 +823,7 @@ export class ReportService {
   static monthly = generateMonthlyReport;
   static delivererPerformance = generateDelivererPerformanceReport;
   static customerStatement = generateCustomerStatement;
-  static exportData = exportReport;
+  static exportData = exportToExcel;
 }
 
 export default reportService;

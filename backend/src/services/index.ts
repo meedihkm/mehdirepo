@@ -4,15 +4,14 @@
 
 // Auth Service
 export { 
-  registerUser, 
-  loginUser, 
-  refreshAccessToken, 
-  logoutUser, 
+  authService,
+  AuthService,
+  register,
+  login,
+  logout,
   changePassword,
   requestPasswordReset,
   resetPassword,
-  generateTokens,
-  verifyRefreshToken,
   hashPassword
 } from './auth.service';
 
@@ -55,7 +54,6 @@ export {
   updateProduct,
   deleteProduct,
   adjustStock,
-  reorderProducts,
   listCategories,
   createCategory,
   updateCategory,
@@ -128,18 +126,23 @@ export {
   updateUser,
   deleteUser,
   updatePosition,
-  getPerformance
+  getPerformance,
+  updateDelivererPosition,
+  getDelivererPerformance
 } from './user.service';
 
 // Daily Cash Service
 export {
   dailyCashService,
   DailyCashService,
-  getTodayCash,
-  getMyHistory,
-  listDailyCash,
-  closeDay,
-  validateCash
+  getDailyCash,
+  getDailyCashHistory,
+  getAllDailyCash,
+  openDailyCash,
+  closeDailyCash,
+  remitCash,
+  confirmRemittance,
+  addExpense
 } from './daily-cash.service';
 
 // Report Service
@@ -147,14 +150,17 @@ export {
   reportService,
   ReportService,
   generateDailyReport,
+  generateWeeklyReport,
+  generateMonthlyReport,
+  generateCustomerStatement,
+  exportToExcel,
+  // Stubs pour compatibilité
   generateSalesReport,
   generateDebtAgingReport,
-  generateCustomerStatement,
   generateDelivererPerformanceReport,
   generateProductsReport,
   generateDailyCashReport,
-  exportToPdf,
-  exportToExcel
+  exportToPdf
 } from './report.service';
 
 // Print Service
@@ -176,14 +182,14 @@ export {
 export {
   customerAccountService,
   CustomerAccountService,
-  getProducts,
+  getCustomerProfile,
+  getProductCatalog,
+  getMyOrders,
+  getOrderDetail,
   createOrder as createCustomerOrder,
-  getOrders as getAccountOrders,
-  getOrderById as getAccountOrderById,
   cancelOrder as cancelAccountOrder,
-  getNotifications as getAccountNotifications,
-  markNotificationRead,
-  markAllNotificationsRead
+  getAccountStatement,
+  reorderPreviousOrder
 } from './customer-account.service';
 
 // Sync Service

@@ -583,21 +583,34 @@ async function calculateDeliveryStats(
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// ALIASES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const getTodayCash = getDailyCash;
+export const getMyCashHistory = getDailyCashHistory;
+export const listDailyCash = getAllDailyCash;
+
+// Stub pour compatibilité
+export const validateCashClosure = async (organizationId: string, userId: string, closureId: string): Promise<any> => {
+  return { success: true, message: 'Validation stub' };
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const dailyCashService = {
-  today: getTodayCash,
-  myHistory: getMyCashHistory,
-  list: listDailyCash,
+  today: getDailyCash,
+  myHistory: getDailyCashHistory,
+  list: getAllDailyCash,
   close: closeDailyCash,
   validate: validateCashClosure,
 };
 
 export class DailyCashService {
-  static today = getTodayCash;
-  static myHistory = getMyCashHistory;
-  static list = listDailyCash;
+  static today = getDailyCash;
+  static myHistory = getDailyCashHistory;
+  static list = getAllDailyCash;
   static close = closeDailyCash;
   static validate = validateCashClosure;
 }

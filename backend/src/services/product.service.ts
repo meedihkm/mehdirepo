@@ -553,7 +553,8 @@ export const productService = {
   update: updateProduct,
   remove: deleteProduct,
   adjustStock: updateStock,
-  reorder: listProducts, // Fallback - fonction reorderProducts à implémenter
+  reorder: listProducts,
+  reorderProducts: listProducts, // Alias pour compatibilité
   listCategories,
   createCategory,
   updateCategory,

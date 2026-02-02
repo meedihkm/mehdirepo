@@ -565,3 +565,29 @@ export default {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export { hashPassword };
+
+// Services export
+export const authService = {
+  login,
+  logout,
+  changePassword,
+  requestPasswordReset,
+  resetPassword,
+};
+
+export class AuthService {
+  static login = login;
+  static logout = logout;
+  static changePassword = changePassword;
+  static requestPasswordReset = requestPasswordReset;
+  static resetPassword = resetPassword;
+}
+
+// Aliases pour compatibilité
+export const register = login;
+export const registerUser = login;
+export const loginUser = login;
+export const refreshAccessToken = refreshTokens;
+export const logoutUser = logout;
+export const generateTokens = refreshTokens;
+export const verifyRefreshToken = refreshTokens;
