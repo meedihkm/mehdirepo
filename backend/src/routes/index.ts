@@ -114,10 +114,10 @@ orgRoutes.put('/settings',
 );
 
 // Dashboard stats
-orgRoutes.get('/dashboard', dashboardController.overview);
+orgRoutes.get('/dashboard', dashboardController.getOverview);
 
 // Stats détaillées
-orgRoutes.get('/stats/sales', dashboardController.sales);
+orgRoutes.get('/stats/sales', dashboardController.getSalesStats);
 orgRoutes.get('/stats/top-products', dashboardController.topProducts);
 orgRoutes.get('/stats/deliverer-performance', dashboardController.delivererPerformance);
 orgRoutes.get('/stats/stock-alerts', dashboardController.stockAlerts);
@@ -132,10 +132,10 @@ const dashboardRoutes = Router();
 dashboardRoutes.use(authenticate, authorize('admin', 'manager'));
 
 // Vue d'ensemble
-dashboardRoutes.get('/overview', dashboardController.overview);
+dashboardRoutes.get('/overview', dashboardController.getOverview);
 
 // Stats ventes
-dashboardRoutes.get('/sales', validateQuery(schemas.finance.overview), dashboardController.sales);
+dashboardRoutes.get('/sales', validateQuery(schemas.finance.overview), dashboardController.getSalesStats);
 
 // Top produits
 dashboardRoutes.get('/top-products', dashboardController.topProducts);
