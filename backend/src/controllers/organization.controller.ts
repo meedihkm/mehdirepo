@@ -12,7 +12,10 @@ import { AppError } from '../utils/errors';
 // Route: orgRoutes.get('/')
 export const get = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { organizationId } = req.user!;
+    if (!req.user) {
+      throw new AppError('Utilisateur non authentifié', 401);
+    }
+    const { organizationId } = req.user;
     const [org] = await db
       .select()
       .from(organizations)
@@ -29,7 +32,10 @@ export const get = async (req: Request, res: Response, next: NextFunction) => {
 // Route: orgRoutes.put('/')
 export const update = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { organizationId } = req.user!;
+    if (!req.user) {
+      throw new AppError('Utilisateur non authentifié', 401);
+    }
+    const { organizationId } = req.user;
     const { name, address, phone, email, taxId, logo } = req.body;
 
     const updateData: Record<string, any> = {};
@@ -56,7 +62,10 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
 // Route: orgRoutes.put('/settings')
 export const updateSettings = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { organizationId } = req.user!;
+    if (!req.user) {
+      throw new AppError('Utilisateur non authentifié', 401);
+    }
+    const { organizationId } = req.user;
     const {
       currency, timezone, receiptFooter, defaultCreditLimit,
       lowStockThreshold, notifications, deliveryFeeDefault,
@@ -87,7 +96,10 @@ export const updateSettings = async (req: Request, res: Response, next: NextFunc
 // Route: orgRoutes.get('/dashboard')
 export const dashboard = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { organizationId } = req.user!;
+    if (!req.user) {
+      throw new AppError('Utilisateur non authentifié', 401);
+    }
+    const { organizationId } = req.user;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
