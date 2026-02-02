@@ -417,29 +417,6 @@ export const updateDelivererPosition = async (delivererId: string, location: { l
     .where(eq(users.id, delivererId));
 };
 
-export const getDelivererPerformance = async (delivererId: string, period?: { start: Date; end: Date }): Promise<any> => {
-  const startDate = period?.start || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-  const endDate = period?.end || new Date();
-  
-  const delivererDeliveries = await db.query.deliveries.findMany({
-    where: and(
-      eq(deliveries.delivererId, delivererId),
-      sql`${deliveries.createdAt} >= ${startDate}`,
-      sql`${deliveries.createdAt} <= ${endDate}`
-    ),
-  });
-  
-  const completed = delivererDeliveries.filter(d => d.status === 'delivered').length;
-  const failed = delivererDeliveries.filter(d => d.status === 'failed').length;
-  
-  return {
-    totalDeliveries: delivererDeliveries.length,
-    completed,
-    failed,
-    successRate: delivererDeliveries.length > 0 ? (completed / delivererDeliveries.length) * 100 : 0,
-  };
-};
-
 // Alias pour compatibilité
 export const updatePosition = updateDelivererPosition;
 export const getPerformance = getDelivererPerformance;
