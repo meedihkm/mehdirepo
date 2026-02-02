@@ -4,11 +4,11 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 import { Request, Response, NextFunction } from 'express';
-import { CustomerService } from '../services/customer.service';
-import { OrderService } from '../services/order.service';
-import { ProductService } from '../services/product.service';
-import { PaymentService } from '../services/payment.service';
-import { AuthRequest } from '../middlewares/auth.middleware';
+import { CustomerService } from '../services';
+import { OrderService } from '../services';
+import { ProductService } from '../services';
+import { PaymentService } from '../services';
+import { AuthenticatedUser } from '../middlewares/auth.middleware';
 import { z } from 'zod';
 import { db } from '../database';
 import { customers, orders, orderItems, products, categories, notifications } from '../database/schema';
@@ -48,7 +48,7 @@ export class CustomerApiController {
    * Profil client avec statistiques
    * GET /api/customer/profile
    */
-  async getProfile(req: AuthRequest, res: Response, next: NextFunction) {
+  async getProfile(req: AuthenticatedUser, res: Response, next: NextFunction) {
     try {
       const customerId = req.user!.customerId;
       const organizationId = req.user!.organizationId;
@@ -117,7 +117,7 @@ export class CustomerApiController {
    * Catalogue produits (filtré pour le client)
    * GET /api/customer/products
    */
-  async getProducts(req: AuthRequest, res: Response, next: NextFunction) {
+  async getProducts(req: AuthenticatedUser, res: Response, next: NextFunction) {
     try {
       const organizationId = req.user!.organizationId;
       const { categoryId, search, page = '1', limit = '50' } = req.query;
@@ -195,7 +195,7 @@ export class CustomerApiController {
    * Produits en vedette
    * GET /api/customer/products/featured
    */
-  async getFeaturedProducts(req: AuthRequest, res: Response, next: NextFunction) {
+  async getFeaturedProducts(req: AuthenticatedUser, res: Response, next: NextFunction) {
     try {
       const organizationId = req.user!.organizationId;
 
@@ -241,7 +241,7 @@ export class CustomerApiController {
    * Catégories
    * GET /api/customer/categories
    */
-  async getCategories(req: AuthRequest, res: Response, next: NextFunction) {
+  async getCategories(req: AuthenticatedUser, res: Response, next: NextFunction) {
     try {
       const organizationId = req.user!.organizationId;
 
@@ -277,7 +277,7 @@ export class CustomerApiController {
    * Liste des commandes du client
    * GET /api/customer/orders
    */
-  async getOrders(req: AuthRequest, res: Response, next: NextFunction) {
+  async getOrders(req: AuthenticatedUser, res: Response, next: NextFunction) {
     try {
       const customerId = req.user!.customerId;
       const { status, page = '1', limit = '20' } = req.query;
@@ -340,7 +340,7 @@ export class CustomerApiController {
    * Détail d'une commande
    * GET /api/customer/orders/:id
    */
-  async getOrderDetail(req: AuthRequest, res: Response, next: NextFunction) {
+  async getOrderDetail(req: AuthenticatedUser, res: Response, next: NextFunction) {
     try {
       const customerId = req.user!.customerId;
       const { id } = req.params;
@@ -395,7 +395,7 @@ export class CustomerApiController {
    * Créer une commande
    * POST /api/customer/orders
    */
-  async createOrder(req: AuthRequest, res: Response, next: NextFunction) {
+  async createOrder(req: AuthenticatedUser, res: Response, next: NextFunction) {
     try {
       const customerId = req.user!.customerId;
       const organizationId = req.user!.organizationId;
@@ -550,7 +550,7 @@ export class CustomerApiController {
    * Annuler une commande
    * POST /api/customer/orders/:id/cancel
    */
-  async cancelOrder(req: AuthRequest, res: Response, next: NextFunction) {
+  async cancelOrder(req: AuthenticatedUser, res: Response, next: NextFunction) {
     try {
       const customerId = req.user!.customerId;
       const { id } = req.params;
@@ -630,7 +630,7 @@ export class CustomerApiController {
    * Relevé de compte
    * GET /api/customer/statement
    */
-  async getStatement(req: AuthRequest, res: Response, next: NextFunction) {
+  async getStatement(req: AuthenticatedUser, res: Response, next: NextFunction) {
     try {
       const customerId = req.user!.customerId;
       const { startDate, endDate } = req.query;
@@ -663,7 +663,7 @@ export class CustomerApiController {
    * Notifications
    * GET /api/customer/notifications
    */
-  async getNotifications(req: AuthRequest, res: Response, next: NextFunction) {
+  async getNotifications(req: AuthenticatedUser, res: Response, next: NextFunction) {
     try {
       const customerId = req.user!.customerId;
 
@@ -687,7 +687,7 @@ export class CustomerApiController {
    * Marquer notification comme lue
    * PATCH /api/customer/notifications/:id/read
    */
-  async markNotificationRead(req: AuthRequest, res: Response, next: NextFunction) {
+  async markNotificationRead(req: AuthenticatedUser, res: Response, next: NextFunction) {
     try {
       const customerId = req.user!.customerId;
       const { id } = req.params;
@@ -713,7 +713,7 @@ export class CustomerApiController {
    * Envoyer un feedback
    * POST /api/customer/feedback
    */
-  async submitFeedback(req: AuthRequest, res: Response, next: NextFunction) {
+  async submitFeedback(req: AuthenticatedUser, res: Response, next: NextFunction) {
     try {
       const customerId = req.user!.customerId;
       const organizationId = req.user!.organizationId;

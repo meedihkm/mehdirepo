@@ -586,13 +586,20 @@ async function calculateDeliveryStats(
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export default {
-  getDailyCash,
-  getDailyCashHistory,
-  openDailyCash,
-  closeDailyCash,
-  remitCash,
-  confirmRemittance,
-  addExpense,
-  getAllDailyCash,
+export const dailyCashService = {
+  today: getTodayCash,
+  myHistory: getMyCashHistory,
+  list: listDailyCash,
+  close: closeDailyCash,
+  validate: validateCashClosure,
 };
+
+export class DailyCashService {
+  static today = getTodayCash;
+  static myHistory = getMyCashHistory;
+  static list = listDailyCash;
+  static close = closeDailyCash;
+  static validate = validateCashClosure;
+}
+
+export default dailyCashService;

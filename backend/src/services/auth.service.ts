@@ -536,6 +536,15 @@ const normalizePhone = (phone: string): string => {
   return normalized;
 };
 
+/**
+ * Hash un mot de passe avec bcrypt
+ * @param password - Mot de passe en clair
+ * @returns Mot de passe hashé
+ */
+const hashPassword = async (password: string): Promise<string> => {
+  return bcrypt.hash(password, config.security.bcryptRounds);
+};
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -550,3 +559,9 @@ export default {
   requestPasswordReset,
   resetPassword,
 };
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EXPORTS NAMED (pour compatibilité)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export { hashPassword };

@@ -612,9 +612,20 @@ const formatPayment = (payment: any): PaymentWithDetails => ({
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export default {
-  createPayment,
-  processDeliveryPayment,
-  listPayments,
-  getPaymentById,
+export const paymentService = {
+  list: listPayments,
+  getById: getPaymentById,
+  create: createPayment,
+  recordPayment,
+  getPaymentHistory,
 };
+
+export class PaymentService {
+  static list = listPayments;
+  static getById = getPaymentById;
+  static create = createPayment;
+  static recordPayment = recordPayment;
+  static getPaymentHistory = getPaymentHistory;
+}
+
+export default paymentService;

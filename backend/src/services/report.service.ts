@@ -777,10 +777,22 @@ async function exportDeliveries(
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export default {
-  generateDailyReport,
-  generateWeeklyReport,
-  generateMonthlyReport,
-  generateCustomerStatement,
-  exportToExcel,
+export const reportService = {
+  daily: generateDailyReport,
+  weekly: generateWeeklyReport,
+  monthly: generateMonthlyReport,
+  delivererPerformance: generateDelivererPerformanceReport,
+  customerStatement: generateCustomerStatement,
+  exportData: exportReport,
 };
+
+export class ReportService {
+  static daily = generateDailyReport;
+  static weekly = generateWeeklyReport;
+  static monthly = generateMonthlyReport;
+  static delivererPerformance = generateDelivererPerformanceReport;
+  static customerStatement = generateCustomerStatement;
+  static exportData = exportReport;
+}
+
+export default reportService;

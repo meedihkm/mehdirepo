@@ -118,9 +118,9 @@ orgRoutes.get('/dashboard', dashboardController.getOverview);
 
 // Stats détaillées
 orgRoutes.get('/stats/sales', dashboardController.getSalesStats);
-orgRoutes.get('/stats/top-products', dashboardController.topProducts);
-orgRoutes.get('/stats/deliverer-performance', dashboardController.delivererPerformance);
-orgRoutes.get('/stats/stock-alerts', dashboardController.stockAlerts);
+orgRoutes.get('/stats/top-products', dashboardController.getTopProducts);
+orgRoutes.get('/stats/deliverer-performance', dashboardController.getDelivererPerformance);
+orgRoutes.get('/stats/stock-alerts', dashboardController.getStockAlerts);
 
 router.use('/organization', orgRoutes);
 
@@ -138,13 +138,13 @@ dashboardRoutes.get('/overview', dashboardController.getOverview);
 dashboardRoutes.get('/sales', validateQuery(schemas.finance.overview), dashboardController.getSalesStats);
 
 // Top produits
-dashboardRoutes.get('/top-products', dashboardController.topProducts);
+dashboardRoutes.get('/top-products', dashboardController.getTopProducts);
 
 // Performance livreurs
-dashboardRoutes.get('/deliverer-performance', validateQuery(schemas.dateRange), dashboardController.delivererPerformance);
+dashboardRoutes.get('/deliverer-performance', validateQuery(schemas.dateRange), dashboardController.getDelivererPerformance);
 
 // Alertes stock
-dashboardRoutes.get('/stock-alerts', dashboardController.stockAlerts);
+dashboardRoutes.get('/stock-alerts', dashboardController.getStockAlerts);
 
 router.use('/dashboard', dashboardRoutes);
 
@@ -198,7 +198,7 @@ userRoutes.put('/:id/position',
   validateId,
   authorize('deliverer'),
   validateBody(schemas.user.updatePosition),
-  userController.updatePosition
+  userController.updateUserPosition
 );
 
 router.use('/users', userRoutes);
@@ -214,20 +214,20 @@ customerRoutes.use(authenticate);
 customerRoutes.get('/',
   authorize('admin', 'manager', 'deliverer'),
   validateQuery(schemas.customer.query),
-  customerController.list
+  customerController.listCustomers
 );
 
 // Créer client
 customerRoutes.post('/',
   authorize('admin', 'manager'),
   validateBody(schemas.customer.create),
-  customerController.create
+  customerController.createCustomer
 );
 
 // Détail client
 customerRoutes.get('/:id',
   validateId,
-  customerController.getById
+  customerController.getCustomerById
 );
 
 // Modifier client
@@ -235,14 +235,14 @@ customerRoutes.put('/:id',
   authorize('admin', 'manager'),
   validateId,
   validateBody(schemas.customer.update),
-  customerController.update
+  customerController.updateCustomer
 );
 
 // Supprimer/désactiver client
 customerRoutes.delete('/:id',
   authorize('admin'),
   validateId,
-  customerController.remove
+  customerController.deleteCustomer
 );
 
 // Commandes du client
@@ -256,7 +256,7 @@ customerRoutes.get('/:id/orders',
 customerRoutes.get('/:id/payments',
   validateId,
   validateQuery(schemas.payment.query),
-  customerController.getPayments
+  customerController.getCustomerPayments
 );
 
 // Relevé de compte
@@ -271,7 +271,7 @@ customerRoutes.put('/:id/credit-limit',
   authorize('admin', 'manager'),
   validateId,
   validateBody(schemas.customer.updateCreditLimit),
-  customerController.updateCreditLimit
+  customerController.updateCustomerCreditLimit
 );
 
 router.use('/customers', customerRoutes);
@@ -286,20 +286,20 @@ productRoutes.use(authenticate);
 // Liste produits
 productRoutes.get('/',
   validateQuery(schemas.product.query),
-  productController.list
+  productController.listProducts
 );
 
 // Créer produit
 productRoutes.post('/',
   authorize('admin', 'manager'),
   validateBody(schemas.product.create),
-  productController.create
+  productController.createProduct
 );
 
 // Détail produit
 productRoutes.get('/:id',
   validateId,
-  productController.getById
+  productController.getProductById
 );
 
 // Modifier produit
@@ -307,21 +307,21 @@ productRoutes.put('/:id',
   authorize('admin', 'manager'),
   validateId,
   validateBody(schemas.product.update),
-  productController.update
+  productController.updateProduct
 );
 
 // Supprimer produit
 productRoutes.delete('/:id',
   authorize('admin'),
   validateId,
-  productController.remove
+  productController.deleteProduct
 );
 
 // Réorganiser l'ordre
 productRoutes.put('/reorder',
   authorize('admin', 'manager'),
   validateBody(schemas.product.reorder),
-  productController.reorder
+  productController.reorderProducts
 );
 
 // Ajuster stock
@@ -332,7 +332,7 @@ productRoutes.put('/:id/stock',
     quantity: z.number(),
     reason: z.string().optional(),
   })),
-  productController.adjustStock
+  productController.updateStock
 );
 
 router.use('/products', productRoutes);
@@ -368,7 +368,7 @@ categoryRoutes.put('/:id',
 categoryRoutes.delete('/:id',
   authorize('admin'),
   validateId,
-  productController.removeCategory
+  productController.deleteCategory
 );
 
 router.use('/categories', categoryRoutes);
@@ -384,27 +384,27 @@ orderRoutes.use(authenticate);
 orderRoutes.get('/',
   authorize('admin', 'manager', 'deliverer', 'kitchen'),
   validateQuery(schemas.order.query),
-  orderController.list
+  orderController.listOrders
 );
 
 // Créer commande (admin)
 orderRoutes.post('/',
   authorize('admin', 'manager'),
   validateBody(schemas.order.create),
-  orderController.create
+  orderController.createOrder
 );
 
 // Créer commande (client app)
 orderRoutes.post('/customer',
   authorize('customer'),
   validateBody(schemas.order.createByCustomer),
-  orderController.createByCustomer
+  orderController.createOrderByCustomer
 );
 
 // Détail commande
 orderRoutes.get('/:id',
   validateId,
-  orderController.getById
+  orderController.getOrderById
 );
 
 // Modifier commande
@@ -412,7 +412,7 @@ orderRoutes.put('/:id',
   authorize('admin', 'manager'),
   validateId,
   validateBody(schemas.order.update),
-  orderController.update
+  orderController.updateOrder
 );
 
 // Changer statut
@@ -420,7 +420,7 @@ orderRoutes.put('/:id/status',
   authorize('admin', 'manager', 'kitchen', 'deliverer'),
   validateId,
   validateBody(schemas.order.updateStatus),
-  orderController.updateStatus
+  orderController.updateOrderStatus
 );
 
 // Annuler commande
@@ -428,7 +428,7 @@ orderRoutes.put('/:id/cancel',
   authorize('admin', 'manager'),
   validateId,
   validateBody(z.object({ reason: z.string().max(500).optional() })),
-  orderController.cancel
+  orderController.cancelOrder
 );
 
 // Dupliquer commande
@@ -436,7 +436,7 @@ orderRoutes.post('/:id/duplicate',
   authorize('admin', 'manager'),
   validateId,
   validateBody(schemas.order.duplicate),
-  orderController.duplicate
+  orderController.duplicateOrder
 );
 
 router.use('/orders', orderRoutes);
@@ -452,34 +452,34 @@ deliveryRoutes.use(authenticate);
 deliveryRoutes.get('/',
   authorize('admin', 'manager'),
   validateQuery(schemas.delivery.query),
-  deliveryController.list
+  deliveryController.listDeliveries
 );
 
 // Ma tournée (livreur)
 deliveryRoutes.get('/my-route',
   authorize('deliverer'),
   validateQuery(schemas.delivery.myRoute),
-  deliveryController.myRoute
+  deliveryController.getDelivererRoute
 );
 
 // Assigner livraisons
 deliveryRoutes.post('/assign',
   authorize('admin', 'manager'),
   validateBody(schemas.delivery.assign),
-  deliveryController.assign
+  deliveryController.assignDeliveries
 );
 
 // Optimiser tournée
 deliveryRoutes.put('/optimize',
   authorize('admin', 'manager'),
   validateBody(schemas.delivery.optimize),
-  deliveryController.optimize
+  deliveryController.optimizeRoute
 );
 
 // Détail livraison
 deliveryRoutes.get('/:id',
   validateId,
-  deliveryController.getById
+  deliveryController.getDeliveryById
 );
 
 // Changer statut
@@ -487,7 +487,7 @@ deliveryRoutes.put('/:id/status',
   authorize('deliverer'),
   validateId,
   validateBody(schemas.delivery.updateStatus),
-  deliveryController.updateStatus
+  deliveryController.updateDeliveryStatus
 );
 
 // Compléter livraison
@@ -495,7 +495,7 @@ deliveryRoutes.put('/:id/complete',
   authorize('deliverer'),
   validateId,
   validateBody(schemas.delivery.complete),
-  deliveryController.complete
+  deliveryController.completeDelivery
 );
 
 // Échec livraison
@@ -503,7 +503,7 @@ deliveryRoutes.put('/:id/fail',
   authorize('deliverer'),
   validateId,
   validateBody(schemas.delivery.fail),
-  deliveryController.fail
+  deliveryController.failDelivery
 );
 
 // Collecter dette (sans commande)
@@ -554,35 +554,35 @@ dailyCashRoutes.use(authenticate);
 // Ma caisse du jour (livreur)
 dailyCashRoutes.get('/today',
   authorize('deliverer'),
-  dailyCashController.today
+  dailyCashController.getTodayCash
 );
 
 // Historique ma caisse
 dailyCashRoutes.get('/my-history',
   authorize('deliverer'),
   validateQuery(schemas.dailyCash.query),
-  dailyCashController.myHistory
+  dailyCashController.getMyCashHistory
 );
 
 // Liste caisses (admin)
 dailyCashRoutes.get('/',
   authorize('admin', 'manager'),
   validateQuery(schemas.dailyCash.query),
-  dailyCashController.list
+  dailyCashController.listDailyCash
 );
 
 // Clôturer journée
 dailyCashRoutes.post('/close',
   authorize('deliverer'),
   validateBody(schemas.dailyCash.close),
-  dailyCashController.close
+  dailyCashController.closeDailyCash
 );
 
 // Valider clôture (admin)
 dailyCashRoutes.put('/:id/validate',
   authorize('admin', 'manager'),
   validateId,
-  dailyCashController.validate
+  dailyCashController.validateCashClosure
 );
 
 router.use('/daily-cash', dailyCashRoutes);
@@ -627,7 +627,7 @@ financeRoutes.get('/reconciliation',
 // Cash flow
 financeRoutes.get('/cash-flow',
   validateQuery(schemas.dateRange),
-  financeController.cashFlow
+  financeController.getCashFlow
 );
 
 router.use('/finance', financeRoutes);
@@ -642,39 +642,39 @@ reportRoutes.use(authenticate, authorize('admin', 'manager'));
 // Rapport journalier
 reportRoutes.get('/daily',
   validateQuery(schemas.report.daily),
-  reportController.daily
+  reportController.generateDailyReport
 );
 
 // Rapport hebdomadaire
 reportRoutes.get('/weekly',
   validateQuery(schemas.report.weekly),
-  reportController.weekly
+  reportController.generateWeeklyReport
 );
 
 // Rapport mensuel
 reportRoutes.get('/monthly',
   validateQuery(schemas.report.monthly),
-  reportController.monthly
+  reportController.generateMonthlyReport
 );
 
 // Performance livreur
 reportRoutes.get('/deliverer/:id',
   validateParams(z.object({ id: z.string().uuid() })),
   validateQuery(schemas.dateRange),
-  reportController.delivererPerformance
+  reportController.generateDelivererPerformanceReport
 );
 
 // Relevé client
 reportRoutes.get('/customer/:id',
   validateParams(z.object({ id: z.string().uuid() })),
   validateQuery(schemas.dateRange),
-  reportController.customerStatement
+  reportController.generateCustomerStatement
 );
 
 // Export
 reportRoutes.get('/export',
   validateQuery(schemas.report.export),
-  reportController.exportData
+  reportController.exportReport
 );
 
 router.use('/reports', reportRoutes);
@@ -689,24 +689,24 @@ syncRoutes.use(authenticate, authorize('deliverer'));
 // Données initiales
 syncRoutes.get('/initial',
   validateQuery(schemas.sync.initial),
-  syncController.initial
+  syncController.getInitialDownload
 );
 
 // Push transactions offline
 syncRoutes.post('/push',
   validateBody(schemas.sync.push),
-  syncController.push
+  syncController.processOfflineTransactions
 );
 
 // Pull mises à jour
 syncRoutes.get('/pull',
   validateQuery(schemas.sync.pull),
-  syncController.pull
+  syncController.getUpdates
 );
 
 // Statut sync
 syncRoutes.get('/status',
-  syncController.status
+  syncController.getSyncStatus
 );
 
 router.use('/sync', syncRoutes);
@@ -774,13 +774,13 @@ printRoutes.get('/statement/:id',
 // Bon de livraison (thermal printer format)
 printRoutes.get('/delivery/:id/thermal',
   validateId,
-  printController.deliveryThermal
+  printController.generateDeliveryNotePDF
 );
 
 // Reçu thermal
 printRoutes.get('/receipt/:id/thermal',
   validateId,
-  printController.receiptThermal
+  printController.generateReceiptPDF
 );
 
 router.use('/print', printRoutes);

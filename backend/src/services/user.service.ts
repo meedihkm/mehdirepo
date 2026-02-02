@@ -403,14 +403,24 @@ export const getDeliverersAvailability = async (
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export default {
-  listUsers,
-  getUserById,
-  createUser,
-  updateUser,
-  deactivateUser,
-  resetUserPassword,
-  listDeliverers,
-  getDelivererPerformance,
-  getDeliverersAvailability,
+export const userService = {
+  list: listUsers,
+  getById: getUserById,
+  create: createUser,
+  update: updateUser,
+  remove: deleteUser,
+  updatePosition,
+  getPerformance,
 };
+
+export class UserService {
+  static list = listUsers;
+  static getById = getUserById;
+  static create = createUser;
+  static update = updateUser;
+  static remove = deleteUser;
+  static updatePosition = updatePosition;
+  static getPerformance = getPerformance;
+}
+
+export default userService;

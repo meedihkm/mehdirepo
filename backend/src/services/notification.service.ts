@@ -454,89 +454,37 @@ export class NotificationService {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// SINGLETON
+// EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const notificationService = new NotificationService();
+export const notificationService = {
+  list: listNotifications,
+  getUnreadCount,
+  markAsRead: markNotificationAsRead,
+  markAllAsRead: markAllNotificationsAsRead,
+  registerDeviceToken,
+  create: createNotification,
+  notifyOrderCreated,
+  notifyOrderStatusChanged,
+  notifyDeliveryAssigned,
+  notifyDeliveryCompleted,
+  notifyPaymentReceived,
+  notifyDebtReminder,
+};
 
-// Fonctions utilitaires pour les workers
-
-export async function notifyOrderCreated(customerId: string, orderNumber: string): Promise<void> {
-  await notificationService.sendToCustomer(
-    customerId,
-    'ORDER_CREATED',
-    'Nouvelle commande',
-    `Votre commande ${orderNumber} a été créée`,
-    { orderNumber }
-  );
-}
-
-export async function notifyOrderConfirmed(customerId: string, orderNumber: string): Promise<void> {
-  await notificationService.sendToCustomer(
-    customerId,
-    'ORDER_CONFIRMED',
-    'Commande confirmée',
-    `Votre commande ${orderNumber} est confirmée`,
-    { orderNumber }
-  );
-}
-
-export async function notifyOrderReady(customerId: string, orderNumber: string): Promise<void> {
-  await notificationService.sendToCustomer(
-    customerId,
-    'ORDER_READY',
-    'Commande prête',
-    `Votre commande ${orderNumber} est prête pour livraison`,
-    { orderNumber }
-  );
-}
-
-export async function notifyDeliveryAssigned(customerId: string, orderNumber: string, delivererName: string): Promise<void> {
-  await notificationService.sendToCustomer(
-    customerId,
-    'DELIVERY_ASSIGNED',
-    'Livreur assigné',
-    `${delivererName} livrera votre commande ${orderNumber}`,
-    { orderNumber, delivererName }
-  );
-}
-
-export async function notifyDeliveryCompleted(customerId: string, orderNumber: string): Promise<void> {
-  await notificationService.sendToCustomer(
-    customerId,
-    'DELIVERY_COMPLETED',
-    'Livraison effectuée',
-    `Votre commande ${orderNumber} a été livrée`,
-    { orderNumber }
-  );
-}
-
-export async function notifyPaymentReceived(customerId: string, amount: number): Promise<void> {
-  await notificationService.sendToCustomer(
-    customerId,
-    'PAYMENT_RECEIVED',
-    'Paiement reçu',
-    `Nous avons reçu votre paiement de ${amount} DZD`,
-    { amount }
-  );
-}
-
-export async function notifyCreditLimitWarning(organizationId: string, customerName: string, currentDebt: number, limit: number): Promise<void> {
-  await notificationService.notifyAdmin(
-    organizationId,
-    'CREDIT_LIMIT_WARNING',
-    `Le client ${customerName} approche de sa limite de crédit: ${currentDebt}/${limit} DZD`,
-    { customerName, currentDebt, limit }
-  );
-}
-
-export async function notifyLowStock(organizationId: string, productName: string, quantity: number): Promise<void> {
-  await notificationService.notifyAdmin(
-    organizationId,
-    'LOW_STOCK',
-    `Stock bas: ${productName} (${quantity} unités restantes)`,
-    { productName, quantity }
-  );
+export class NotificationService {
+  static list = listNotifications;
+  static getUnreadCount = getUnreadCount;
+  static markAsRead = markNotificationAsRead;
+  static markAllAsRead = markAllNotificationsAsRead;
+  static registerDeviceToken = registerDeviceToken;
+  static create = createNotification;
+  static notifyOrderCreated = notifyOrderCreated;
+  static notifyOrderStatusChanged = notifyOrderStatusChanged;
+  static notifyDeliveryAssigned = notifyDeliveryAssigned;
+  static notifyDeliveryCompleted = notifyDeliveryCompleted;
+  static notifyPaymentReceived = notifyPaymentReceived;
+  static notifyDebtReminder = notifyDebtReminder;
 }
 
 export default notificationService;

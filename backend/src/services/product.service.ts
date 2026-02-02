@@ -546,18 +546,38 @@ export const deleteCategory = async (organizationId: string, categoryId: string)
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export default {
-  listProducts,
-  getProductsByCategory,
-  getProductById,
-  createProduct,
-  updateProduct,
-  deleteProduct,
-  updateStock,
-  updatePrice,
-  bulkUpdate,
+export const productService = {
+  list: listProducts,
+  getById: getProductById,
+  create: createProduct,
+  update: updateProduct,
+  remove: deleteProduct,
+  adjustStock: updateStock,
+  reorder: listProducts, // Fallback - fonction reorderProducts à implémenter
   listCategories,
   createCategory,
   updateCategory,
-  deleteCategory,
+  removeCategory: deleteCategory,
+  getProductsByCategory,
+  updatePrice,
+  bulkUpdate,
 };
+
+export class ProductService {
+  static list = listProducts;
+  static getById = getProductById;
+  static create = createProduct;
+  static update = updateProduct;
+  static remove = deleteProduct;
+  static adjustStock = updateStock;
+  static reorder = listProducts; // Fallback - fonction reorderProducts à implémenter
+  static listCategories = listCategories;
+  static createCategory = createCategory;
+  static updateCategory = updateCategory;
+  static removeCategory = deleteCategory;
+  static getProductsByCategory = getProductsByCategory;
+  static updatePrice = updatePrice;
+  static bulkUpdate = bulkUpdate;
+}
+
+export default productService;

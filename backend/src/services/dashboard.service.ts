@@ -746,15 +746,20 @@ export const getStockAlerts = async (organizationId: string) => {
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export default {
+export const dashboardService = {
   getOverview,
-  getDailyStats,
   getSalesStats,
   getTopProducts,
-  getTopCustomers,
   getDelivererPerformance,
-  getDebtOverview,
-  getAgingReport,
-  getCashFlowForecast,
   getStockAlerts,
 };
+
+export class DashboardService {
+  static getOverview = getOverview;
+  static getSalesStats = getSalesStats;
+  static getTopProducts = getTopProducts;
+  static getDelivererPerformance = getDelivererPerformance;
+  static getStockAlerts = getStockAlerts;
+}
+
+export default dashboardService;

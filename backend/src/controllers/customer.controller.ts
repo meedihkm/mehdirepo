@@ -15,11 +15,10 @@ import {
   paymentHistory,
   notifications,
 } from '../database/schema';
-import { customerService } from '../services/customer.service';
-import { orderService } from '../services/order.service';
+import { customerService, orderService } from '../services';
 import { notificationService } from '../services/notification.service';
 import { generateToken } from '../utils/jwt';
-import { generateOtp, verifyOtp } from '../utils/otp';
+import { generateOtp, verifyOtp as verifyOtpCode } from '../utils/otp';
 import { AppError } from '../utils/errors';
 import { orderStatusEnum, paymentStatusEnum } from '../database/schema';
 
@@ -66,7 +65,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
   const { phone, otp, deviceId } = req.body;
 
   // Vérifier le code OTP
-  const isValid = await verifyOtp(phone, otp);
+  const isValid = await verifyOtpCode(phone, otp);
   if (!isValid) {
     throw new AppError('Code OTP invalide ou expiré', 400);
   }

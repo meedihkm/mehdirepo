@@ -592,14 +592,30 @@ const formatCustomer = (customer: any): CustomerWithStats => ({
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export default {
-  listCustomers,
-  getCustomerById,
-  createCustomer,
-  updateCustomer,
-  deleteCustomer,
+// Export nommé pour compatibilité
+export const customerService = {
+  list: listCustomers,
+  getById: getCustomerById,
+  create: createCustomer,
+  update: updateCustomer,
+  remove: deleteCustomer,
   updateCreditLimit,
-  getCustomerOrders,
-  getCustomerPayments,
-  getCustomerStatement,
+  getOrders: getCustomerOrders,
+  getPayments: getCustomerPayments,
+  getStatement: getCustomerStatement,
 };
+
+// Alias pour compatibilité classe
+export class CustomerService {
+  static list = listCustomers;
+  static getById = getCustomerById;
+  static create = createCustomer;
+  static update = updateCustomer;
+  static remove = deleteCustomer;
+  static updateCreditLimit = updateCreditLimit;
+  static getOrders = getCustomerOrders;
+  static getPayments = getCustomerPayments;
+  static getStatement = getCustomerStatement;
+}
+
+export default customerService;

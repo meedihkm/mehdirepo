@@ -28,6 +28,7 @@ export interface JwtPayload {
 
 export interface AuthenticatedUser {
   id: string;
+  userId: string; // Alias pour id (compatibilité)
   email: string;
   role: string;
   organizationId: string;

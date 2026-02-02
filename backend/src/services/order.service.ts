@@ -733,13 +733,26 @@ const formatOrder = (order: any): OrderWithDetails => ({
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export default {
-  listOrders,
-  getOrderById,
-  createOrder,
-  createOrderByCustomer,
-  updateOrder,
-  updateOrderStatus,
-  cancelOrder,
-  duplicateOrder,
+export const orderService = {
+  list: listOrders,
+  getById: getOrderById,
+  create: createOrder,
+  createByCustomer: createOrderByCustomer,
+  update: updateOrder,
+  updateStatus: updateOrderStatus,
+  cancel: cancelOrder,
+  duplicate: duplicateOrder,
 };
+
+export class OrderService {
+  static list = listOrders;
+  static getById = getOrderById;
+  static create = createOrder;
+  static createByCustomer = createOrderByCustomer;
+  static update = updateOrder;
+  static updateStatus = updateOrderStatus;
+  static cancel = cancelOrder;
+  static duplicate = duplicateOrder;
+}
+
+export default orderService;
