@@ -207,6 +207,14 @@ export const updateUser = async (
 // DÉSACTIVER UTILISATEUR
 // ═══════════════════════════════════════════════════════════════════════════════
 
+export const deleteUser = async (
+  organizationId: string,
+  userId: string,
+  requestedById: string
+) => {
+  return deactivateUser(organizationId, userId, requestedById);
+};
+
 export const deactivateUser = async (
   organizationId: string,
   userId: string
@@ -408,7 +416,7 @@ export const userService = {
   getById: getUserById,
   create: createUser,
   update: updateUser,
-  remove: deleteUser,
+  remove: deactivateUser,
   updatePosition,
   getPerformance,
 };
@@ -418,7 +426,7 @@ export class UserService {
   static getById = getUserById;
   static create = createUser;
   static update = updateUser;
-  static remove = deleteUser;
+  static remove = deactivateUser;
   static updatePosition = updatePosition;
   static getPerformance = getPerformance;
 }
