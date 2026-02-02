@@ -14,12 +14,11 @@ RUN npm install
 # Copie du code source
 COPY . .
 
-# Build TypeScript (ignore les erreurs)
-RUN npm run build 2>&1 || echo "Build completed with errors"
+# Build TypeScript avec affichage des erreurs
+RUN npm run build 2>&1 | tee build.log || (cat build.log && exit 1)
 
-# Vérification des fichiers créés
-RUN ls -la dist/ 2>/dev/null || echo "No dist folder"
-RUN ls -la dist/config/ 2>/dev/null || echo "No config folder in dist"
+# Vérification que les fichiers sont créés
+RUN ls -la dist/controllers/organization.controller.js || (echo "ERREUR: organization.controller.js non généré" && cat build.log && exit 1)
 
 # Exposition du port
 EXPOSE 3000
