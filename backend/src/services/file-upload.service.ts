@@ -187,7 +187,7 @@ async function createThumbnail(inputPath: string, outputPath: string, size: numb
 // SERVICE PRINCIPAL
 // ═══════════════════════════════════════════════════════════════════════════════
 
-class FileUploadService {
+class FileUploadServiceLocal {
   /**
    * Créer un middleware d'upload pour une catégorie
    */
@@ -423,7 +423,7 @@ class FileUploadService {
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
-export const fileUploadService = new FileUploadService();
+export const fileUploadService = new FileUploadServiceLocal();
 export { FileCategory, UploadedFile };
 export default fileUploadService;
 
@@ -506,7 +506,7 @@ export const fileUploadServiceStubs = {
   processAndUploadImage,
 };
 
-export class FileUploadServiceStatic {
+export class FileUploadService {
   static uploadImage = uploadImage;
   static uploadMultipleImages = uploadMultipleImages;
   static deleteImage = deleteImage;

@@ -559,13 +559,4 @@ export const syncService = {
   getSyncStatus,
 };
 
-export class SyncServiceStatic {
-  static getInitialDownload = getInitialDownload;
-  static processOfflineTransactions = processOfflineTransactions;
-  static getUpdates = getUpdates;
-  static checkConflicts = checkConflicts;
-  static resolveConflict = resolveConflict;
-  static getSyncStatus = getSyncStatus;
-}
-
 export default syncService;

@@ -538,14 +538,4 @@ export const printServiceCompat = {
   printStatement,
 };
 
-export class PrintServiceStatic {
-  static generateDeliveryNotePDF = generateDeliveryNotePDF;
-  static generateReceiptPDF = generateReceiptPDF;
-  static generateStatementPDF = generateStatementPDF;
-  static generateDeliveryNote = generateDeliveryNotePDF;
-  static generateOrderReceipt = generateReceiptPDF;
-  static generateStatement = generateStatementPDF;
-  static printDeliveryNote = generateDeliveryNotePDF;
-  static printReceipt = generateReceiptPDF;
-  static printStatement = generateStatementPDF;
-}
+

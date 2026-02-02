@@ -451,40 +451,112 @@ export class NotificationService {
       .set({ pushToken: token })
       .where(eq(customerAccounts.id, customerAccountId));
   }
+  
+  // ───────────────────────────────────────────────────────────────────────────
+  // MÉTHODES POUR L'EXPORT (stubs - à implémenter)
+  // ───────────────────────────────────────────────────────────────────────────
+  
+  async listNotifications(userId: string, query: any): Promise<any> {
+    const { page = 1, limit = 20, unreadOnly = false } = query;
+    const conditions = [eq(notifications.userId, userId)];
+    if (unreadOnly) conditions.push(eq(notifications.isRead, false));
+    
+    const result = await db.query.notifications.findMany({
+      where: and(...conditions),
+      orderBy: desc(notifications.createdAt),
+      limit,
+      offset: (page - 1) * limit,
+    });
+    
+    return { data: result, pagination: { page, limit, total: result.length } };
+  }
+  
+  async getUnreadCount(userId: string): Promise<number> {
+    const result = await db.select({ count: sql`count(*)::int` })
+      .from(notifications)
+      .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
+    return result[0]?.count || 0;
+  }
+  
+  async markNotificationAsRead(notificationId: string, userId: string): Promise<void> {
+    await db.update(notifications)
+      .set({ isRead: true, readAt: new Date() })
+      .where(and(eq(notifications.id, notificationId), eq(notifications.userId, userId)));
+  }
+  
+  async markAllNotificationsAsRead(userId: string): Promise<void> {
+    await db.update(notifications)
+      .set({ isRead: true, readAt: new Date() })
+      .where(and(eq(notifications.userId, userId), eq(notifications.isRead, false)));
+  }
+  
+  async registerDeviceToken(userId: string, token: string, platform?: string, deviceId?: string): Promise<void> {
+    return this.registerUserPushToken(userId, token, platform, deviceId);
+  }
+  
+  async createNotification(data: any): Promise<any> {
+    const [notification] = await db.insert(notifications).values(data).returning();
+    return notification;
+  }
+  
+  async notifyOrderCreated(order: any): Promise<void> {
+    logger.info(`Notification: Order created ${order.orderNumber}`);
+  }
+  
+  async notifyOrderStatusChanged(order: any, oldStatus: string, newStatus: string): Promise<void> {
+    logger.info(`Notification: Order ${order.orderNumber} status changed from ${oldStatus} to ${newStatus}`);
+  }
+  
+  async notifyDeliveryAssigned(delivery: any, deliverer: any): Promise<void> {
+    logger.info(`Notification: Delivery ${delivery.id} assigned to ${deliverer.name}`);
+  }
+  
+  async notifyDeliveryCompleted(delivery: any, payment: any): Promise<void> {
+    logger.info(`Notification: Delivery ${delivery.id} completed`);
+  }
+  
+  async notifyPaymentReceived(customer: any, amount: number): Promise<void> {
+    logger.info(`Notification: Payment ${amount} received from ${customer.name}`);
+  }
+  
+  async notifyDebtReminder(customer: any, debt: number): Promise<void> {
+    logger.info(`Notification: Debt reminder for ${customer.name}, debt: ${debt}`);
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
+const notificationServiceInstance = new NotificationService();
+
 export const notificationService = {
-  list: listNotifications,
-  getUnreadCount,
-  markAsRead: markNotificationAsRead,
-  markAllAsRead: markAllNotificationsAsRead,
-  registerDeviceToken,
-  create: createNotification,
-  notifyOrderCreated,
-  notifyOrderStatusChanged,
-  notifyDeliveryAssigned,
-  notifyDeliveryCompleted,
-  notifyPaymentReceived,
-  notifyDebtReminder,
+  list: notificationServiceInstance.listNotifications.bind(notificationServiceInstance),
+  getUnreadCount: notificationServiceInstance.getUnreadCount.bind(notificationServiceInstance),
+  markAsRead: notificationServiceInstance.markNotificationAsRead.bind(notificationServiceInstance),
+  markAllAsRead: notificationServiceInstance.markAllNotificationsAsRead.bind(notificationServiceInstance),
+  registerDeviceToken: notificationServiceInstance.registerDeviceToken.bind(notificationServiceInstance),
+  create: notificationServiceInstance.createNotification.bind(notificationServiceInstance),
+  notifyOrderCreated: notificationServiceInstance.notifyOrderCreated.bind(notificationServiceInstance),
+  notifyOrderStatusChanged: notificationServiceInstance.notifyOrderStatusChanged.bind(notificationServiceInstance),
+  notifyDeliveryAssigned: notificationServiceInstance.notifyDeliveryAssigned.bind(notificationServiceInstance),
+  notifyDeliveryCompleted: notificationServiceInstance.notifyDeliveryCompleted.bind(notificationServiceInstance),
+  notifyPaymentReceived: notificationServiceInstance.notifyPaymentReceived.bind(notificationServiceInstance),
+  notifyDebtReminder: notificationServiceInstance.notifyDebtReminder.bind(notificationServiceInstance),
 };
 
-export class NotificationService {
-  static list = listNotifications;
-  static getUnreadCount = getUnreadCount;
-  static markAsRead = markNotificationAsRead;
-  static markAllAsRead = markAllNotificationsAsRead;
-  static registerDeviceToken = registerDeviceToken;
-  static create = createNotification;
-  static notifyOrderCreated = notifyOrderCreated;
-  static notifyOrderStatusChanged = notifyOrderStatusChanged;
-  static notifyDeliveryAssigned = notifyDeliveryAssigned;
-  static notifyDeliveryCompleted = notifyDeliveryCompleted;
-  static notifyPaymentReceived = notifyPaymentReceived;
-  static notifyDebtReminder = notifyDebtReminder;
-}
+// Aliases pour compatibilité
+export const listNotifications = notificationService.list;
+export const getUnreadCount = notificationService.getUnreadCount;
+export const markNotificationAsRead = notificationService.markAsRead;
+export const markAllNotificationsAsRead = notificationService.markAllAsRead;
+export const registerDeviceToken = notificationService.registerDeviceToken;
+export const createNotification = notificationService.create;
+export const notifyOrderCreated = notificationService.notifyOrderCreated;
+export const notifyOrderStatusChanged = notificationService.notifyOrderStatusChanged;
+export const notifyDeliveryAssigned = notificationService.notifyDeliveryAssigned;
+export const notifyDeliveryCompleted = notificationService.notifyDeliveryCompleted;
+export const notifyPaymentReceived = notificationService.notifyPaymentReceived;
+export const notifyDebtReminder = notificationService.notifyDebtReminder;
 
 export default notificationService;
