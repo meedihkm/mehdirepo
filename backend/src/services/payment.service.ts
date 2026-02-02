@@ -609,6 +609,13 @@ const formatPayment = (payment: any): PaymentWithDetails => ({
 });
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// ALIASES pour compatibilité
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const recordPayment = processDeliveryPayment;
+export const getPaymentHistory = listPayments;
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -616,16 +623,16 @@ export const paymentService = {
   list: listPayments,
   getById: getPaymentById,
   create: createPayment,
-  recordPayment,
-  getPaymentHistory,
+  recordPayment: processDeliveryPayment,
+  getPaymentHistory: listPayments,
 };
 
 export class PaymentService {
   static list = listPayments;
   static getById = getPaymentById;
   static create = createPayment;
-  static recordPayment = recordPayment;
-  static getPaymentHistory = getPaymentHistory;
+  static recordPayment = processDeliveryPayment;
+  static getPaymentHistory = listPayments;
 }
 
 export default paymentService;
