@@ -146,7 +146,7 @@ export const dashboard = async (req: Request, res: Response, next: NextFunction)
       .where(and(
         eq(products.organizationId, organizationId),
         eq(products.isActive, true),
-        sql`${products.stockQuantity} <= ${products.minStockLevel}`
+        sql`${products.currentStock} <= ${products.minStockAlert}`
       ));
 
     // Dette totale clients
