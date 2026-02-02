@@ -210,44 +210,10 @@ export const updateUser = async (
 export const deleteUser = async (
   organizationId: string,
   userId: string,
-  requestedById: string
+  _requestedById?: string
 ) => {
-  return deactivateUser(organizationId, userId, requestedById);
+  return deactivateUser(organizationId, userId);
 };
-
-// Fonctions stubs pour compatibilité (à déplacer vers delivery.service.ts)
-export const updateDelivererPosition = async (delivererId: string, location: { lat: number; lng: number }): Promise<void> => {
-  await db.update(users)
-    .set({ currentLatitude: location.lat, currentLongitude: location.lng, updatedAt: new Date() })
-    .where(eq(users.id, delivererId));
-};
-
-export const getDelivererPerformance = async (delivererId: string, period?: { start: Date; end: Date }): Promise<any> => {
-  const startDate = period?.start || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-  const endDate = period?.end || new Date();
-  
-  const delivererDeliveries = await db.query.deliveries.findMany({
-    where: and(
-      eq(deliveries.delivererId, delivererId),
-      sql`${deliveries.createdAt} >= ${startDate}`,
-      sql`${deliveries.createdAt} <= ${endDate}`
-    ),
-  });
-  
-  const completed = delivererDeliveries.filter(d => d.status === 'delivered').length;
-  const failed = delivererDeliveries.filter(d => d.status === 'failed').length;
-  
-  return {
-    totalDeliveries: delivererDeliveries.length,
-    completed,
-    failed,
-    successRate: delivererDeliveries.length > 0 ? (completed / delivererDeliveries.length) * 100 : 0,
-  };
-};
-
-// Alias pour compatibilité
-export const updatePosition = updateDelivererPosition;
-export const getPerformance = getDelivererPerformance;
 
 export const deactivateUser = async (
   organizationId: string,
@@ -440,6 +406,43 @@ export const getDeliverersAvailability = async (
 
   return availability;
 };
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FONCTIONS DE COMPATIBILITÉ (stubs)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const updateDelivererPosition = async (delivererId: string, location: { lat: number; lng: number }): Promise<void> => {
+  await db.update(users)
+    .set({ currentLatitude: location.lat, currentLongitude: location.lng, updatedAt: new Date() })
+    .where(eq(users.id, delivererId));
+};
+
+export const getDelivererPerformance = async (delivererId: string, period?: { start: Date; end: Date }): Promise<any> => {
+  const startDate = period?.start || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+  const endDate = period?.end || new Date();
+  
+  const delivererDeliveries = await db.query.deliveries.findMany({
+    where: and(
+      eq(deliveries.delivererId, delivererId),
+      sql`${deliveries.createdAt} >= ${startDate}`,
+      sql`${deliveries.createdAt} <= ${endDate}`
+    ),
+  });
+  
+  const completed = delivererDeliveries.filter(d => d.status === 'delivered').length;
+  const failed = delivererDeliveries.filter(d => d.status === 'failed').length;
+  
+  return {
+    totalDeliveries: delivererDeliveries.length,
+    completed,
+    failed,
+    successRate: delivererDeliveries.length > 0 ? (completed / delivererDeliveries.length) * 100 : 0,
+  };
+};
+
+// Alias pour compatibilité
+export const updatePosition = updateDelivererPosition;
+export const getPerformance = getDelivererPerformance;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // EXPORTS
