@@ -114,6 +114,83 @@ export class DeliveryService {
   }
   
   // ───────────────────────────────────────────────────────────────────────────
+  // LISTER LES LIVRAISONS (stub)
+  // ───────────────────────────────────────────────────────────────────────────
+  
+  async listDeliveries(organizationId: string, query: any): Promise<any> {
+    const { page = 1, limit = 20, status, delivererId, date } = query;
+    const conditions = [eq(deliveries.organizationId, organizationId)];
+    
+    if (status) conditions.push(eq(deliveries.status, status));
+    if (delivererId) conditions.push(eq(deliveries.delivererId, delivererId));
+    if (date) {
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+      conditions.push(gte(deliveries.scheduledDate, startOfDay));
+      conditions.push(lte(deliveries.scheduledDate, endOfDay));
+    }
+    
+    const result = await db.query.deliveries.findMany({
+      where: and(...conditions),
+      with: { order: { with: { customer: true } }, deliverer: true },
+      limit,
+      offset: (page - 1) * limit,
+      orderBy: desc(deliveries.createdAt),
+    });
+    
+    return {
+      data: result,
+      pagination: { page, limit, total: result.length },
+    };
+  }
+  
+  // ───────────────────────────────────────────────────────────────────────────
+  // RÉCUPÉRER UNE LIVRAISON PAR ID (stub)
+  // ───────────────────────────────────────────────────────────────────────────
+  
+  async getDeliveryById(deliveryId: string, organizationId: string): Promise<any> {
+    const delivery = await db.query.deliveries.findFirst({
+      where: and(eq(deliveries.id, deliveryId), eq(deliveries.organizationId, organizationId)),
+      with: { order: { with: { customer: true, items: { with: { product: true } } } }, deliverer: true },
+    });
+    
+    if (!delivery) {
+      throw new AppError('NOT_FOUND', 'Livraison non trouvée');
+    }
+    
+    return delivery;
+  }
+  
+  // ───────────────────────────────────────────────────────────────────────────
+  // METTRE À JOUR LE STATUT (stub)
+  // ───────────────────────────────────────────────────────────────────────────
+  
+  async updateDeliveryStatus(deliveryId: string, status: string, organizationId: string): Promise<any> {
+    const [updated] = await db.update(deliveries)
+      .set({ status, updatedAt: new Date() })
+      .where(and(eq(deliveries.id, deliveryId), eq(deliveries.organizationId, organizationId)))
+      .returning();
+    
+    if (!updated) {
+      throw new AppError('NOT_FOUND', 'Livraison non trouvée');
+    }
+    
+    return updated;
+  }
+  
+  // ───────────────────────────────────────────────────────────────────────────
+  // METTRE À JOUR LA POSITION (stub)
+  // ───────────────────────────────────────────────────────────────────────────
+  
+  async updateDelivererPosition(delivererId: string, location: { lat: number; lng: number }): Promise<void> {
+    await db.update(users)
+      .set({ currentLatitude: location.lat, currentLongitude: location.lng, updatedAt: new Date() })
+      .where(eq(users.id, delivererId));
+  }
+  
+  // ───────────────────────────────────────────────────────────────────────────
   // COMPLÉTER UNE LIVRAISON
   // ───────────────────────────────────────────────────────────────────────────
   
@@ -890,20 +967,34 @@ export class DeliveryService {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// EXPORTS
+// INSTANCE ET EXPORTS
 // ═══════════════════════════════════════════════════════════════════════════════
 
+const deliveryServiceInstance = new DeliveryService();
+
 export const deliveryService = {
-  list: listDeliveries,
-  getById: getDeliveryById,
-  getDelivererRoute,
-  assign: assignDeliveries,
-  updateStatus: updateDeliveryStatus,
-  complete: completeDelivery,
-  fail: failDelivery,
-  optimize: optimizeRoute,
-  updateDelivererPosition,
-  collectDebt,
+  list: deliveryServiceInstance.listDeliveries.bind(deliveryServiceInstance),
+  getById: deliveryServiceInstance.getDeliveryById.bind(deliveryServiceInstance),
+  getDelivererRoute: deliveryServiceInstance.getMyRoute.bind(deliveryServiceInstance),
+  assign: deliveryServiceInstance.assignDeliveries.bind(deliveryServiceInstance),
+  updateStatus: deliveryServiceInstance.updateDeliveryStatus.bind(deliveryServiceInstance),
+  complete: deliveryServiceInstance.completeDelivery.bind(deliveryServiceInstance),
+  fail: deliveryServiceInstance.failDelivery.bind(deliveryServiceInstance),
+  optimize: deliveryServiceInstance.optimizeRouteOrder.bind(deliveryServiceInstance),
+  updateDelivererPosition: deliveryServiceInstance.updateDelivererPosition.bind(deliveryServiceInstance),
+  collectDebt: deliveryServiceInstance.collectDebt.bind(deliveryServiceInstance),
 };
+
+// Aliases pour compatibilité
+export const listDeliveries = deliveryService.list;
+export const getDeliveryById = deliveryService.getById;
+export const getDelivererRoute = deliveryService.getDelivererRoute;
+export const assignDeliveries = deliveryService.assign;
+export const updateDeliveryStatus = deliveryService.updateStatus;
+export const completeDelivery = deliveryService.complete;
+export const failDelivery = deliveryService.fail;
+export const optimizeRoute = deliveryService.optimize;
+export const updateDelivererPosition = deliveryService.updateDelivererPosition;
+export const collectDebt = deliveryService.collectDebt;
 
 export default deliveryService;
