@@ -10,7 +10,7 @@ import { eq, and, gte, sql, count, sum } from 'drizzle-orm';
 import { AppError } from '../utils/errors';
 
 // Route: orgRoutes.get('/')
-export const get = async (req: Request, res: Response, next: NextFunction) => {
+const get = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.user) {
       throw new AppError('Utilisateur non authentifié', 401);
@@ -30,7 +30,7 @@ export const get = async (req: Request, res: Response, next: NextFunction) => {
 };
 
 // Route: orgRoutes.put('/')
-export const update = async (req: Request, res: Response, next: NextFunction) => {
+const update = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.user) {
       throw new AppError('Utilisateur non authentifié', 401);
@@ -60,7 +60,7 @@ export const update = async (req: Request, res: Response, next: NextFunction) =>
 };
 
 // Route: orgRoutes.put('/settings')
-export const updateSettings = async (req: Request, res: Response, next: NextFunction) => {
+const updateSettings = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.user) {
       throw new AppError('Utilisateur non authentifié', 401);
@@ -94,7 +94,7 @@ export const updateSettings = async (req: Request, res: Response, next: NextFunc
 };
 
 // Route: orgRoutes.get('/dashboard')
-export const dashboard = async (req: Request, res: Response, next: NextFunction) => {
+const dashboard = async (req: Request, res: Response, next: NextFunction) => {
   try {
     if (!req.user) {
       throw new AppError('Utilisateur non authentifié', 401);
@@ -175,3 +175,14 @@ export const dashboard = async (req: Request, res: Response, next: NextFunction)
     next(error);
   }
 };
+
+// Export par défaut pour garantir la compatibilité
+export default {
+  get,
+  update,
+  updateSettings,
+  dashboard,
+};
+
+// Export nommé aussi pour flexibilité
+export { get, update, updateSettings, dashboard };

@@ -11,7 +11,7 @@ import { z } from 'zod';
 
 // Controllers
 import * as authController from '../controllers/auth.controller';
-import { get as organizationGet, update as organizationUpdate, updateSettings as organizationUpdateSettings, dashboard as organizationDashboard } from '../controllers/organization.controller';
+import organizationController from '../controllers/organization.controller';
 import * as userController from '../controllers/user.controller';
 import * as customerController from '../controllers/customer.controller';
 import * as productController from '../controllers/product.controller';
@@ -99,18 +99,18 @@ const orgRoutes = Router();
 orgRoutes.use(authenticate, authorize('admin', 'manager'));
 
 // Info organisation
-orgRoutes.get('/', organizationGet);
+orgRoutes.get('/', organizationController.get);
 
 // Modifier organisation
 orgRoutes.put('/',
   validateBody(schemas.organization.update),
-  organizationUpdate
+  organizationController.update
 );
 
 // Modifier paramètres
 orgRoutes.put('/settings',
   validateBody(schemas.organization.updateSettings),
-  organizationUpdateSettings
+  organizationController.updateSettings
 );
 
 // Dashboard stats
