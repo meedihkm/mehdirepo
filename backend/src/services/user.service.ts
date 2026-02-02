@@ -215,6 +215,9 @@ export const deleteUser = async (
   return deactivateUser(organizationId, userId, requestedById);
 };
 
+// Alias pour compatibilité
+export const updatePosition = updateDelivererPosition;
+
 export const deactivateUser = async (
   organizationId: string,
   userId: string
