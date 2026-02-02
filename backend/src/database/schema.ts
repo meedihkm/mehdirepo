@@ -1046,8 +1046,8 @@ export const stockMovementsRelations = relations(stockMovements, ({ one }) => ({
 // Alias pour compatibilité avec le code qui utilise 'payments' au lieu de 'paymentHistory'
 export const payments = paymentHistory;
 
-// Alias pour compatibilité avec le code qui utilise 'cashRemittances' au lieu de 'cash_receipts'
-export const cashRemittances = cashReceipts;
+// Alias pour compatibilité avec le code qui utilise 'cashRemittances' au lieu de 'daily_cash'
+export const cashRemittances = dailyCash;
 
 // Alias pour compatibilité avec le code qui utilise 'expenses' au lieu de 'expenses' (si besoin)
 export { expenses };
