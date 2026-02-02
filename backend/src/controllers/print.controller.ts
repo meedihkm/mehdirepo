@@ -204,3 +204,34 @@ ${order.deliveryFee>0?`<tr><td>Livraison:</td><td class="r">${fmt(order.delivery
 ${(order.total-order.amountPaid)>0?`<tr class="b"><td>Reste:</td><td class="r">${fmt(order.total-order.amountPaid)}</td></tr>`:''}
 </table><hr><div class="c">${organization.receiptFooter||'Merci de votre confiance!'}</div></body></html>`;
 }
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STUBS pour compatibilité avec les routes
+// ═══════════════════════════════════════════════════════════════════════════════
+
+export const generateDeliveryNotePDF = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { organizationId } = req.user!;
+    const { id } = req.params;
+    
+    const { order, customer, org, items } = await loadOrderData(id, organizationId);
+    const html = generateDeliveryHtml({ organization: org, order, customer, items });
+    
+    res.setHeader('Content-Type', 'text/html');
+    res.send(html);
+  } catch (error) { next(error); }
+};
+
+export const generateReceiptPDF = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { organizationId } = req.user!;
+    const { id } = req.params;
+    
+    const { order, customer, org, items } = await loadOrderData(id, organizationId);
+    const html = generateReceiptHtml({ organization: org, order, customer, items });
+    
+    res.setHeader('Content-Type', 'text/html');
+    res.send(html);
+  } catch (error) { next(error); }
+};

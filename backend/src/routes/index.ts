@@ -554,21 +554,21 @@ dailyCashRoutes.use(authenticate);
 // Ma caisse du jour (livreur)
 dailyCashRoutes.get('/today',
   authorize('deliverer'),
-  dailyCashController.getTodayCash
+  dailyCashController.getMyDailyCash
 );
 
 // Historique ma caisse
 dailyCashRoutes.get('/my-history',
   authorize('deliverer'),
   validateQuery(schemas.dailyCash.query),
-  dailyCashController.getMyCashHistory
+  dailyCashController.getDailyCashHistory
 );
 
 // Liste caisses (admin)
 dailyCashRoutes.get('/',
   authorize('admin', 'manager'),
   validateQuery(schemas.dailyCash.query),
-  dailyCashController.listDailyCash
+  dailyCashController.getAllDailyCash
 );
 
 // Clôturer journée
@@ -582,7 +582,7 @@ dailyCashRoutes.post('/close',
 dailyCashRoutes.put('/:id/validate',
   authorize('admin', 'manager'),
   validateId,
-  dailyCashController.validateCashClosure
+  dailyCashController.confirmRemittance
 );
 
 router.use('/daily-cash', dailyCashRoutes);
@@ -695,13 +695,13 @@ syncRoutes.get('/initial',
 // Push transactions offline
 syncRoutes.post('/push',
   validateBody(schemas.sync.push),
-  syncController.processOfflineTransactions
+  syncController.pushTransactions
 );
 
 // Pull mises à jour
 syncRoutes.get('/pull',
   validateQuery(schemas.sync.pull),
-  syncController.getUpdates
+  syncController.pullUpdates
 );
 
 // Statut sync
