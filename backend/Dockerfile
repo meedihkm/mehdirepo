@@ -11,6 +11,9 @@ COPY package*.json ./
 # Installation des dépendances Node.js
 RUN npm install
 
+# Argument pour invalider le cache (changer la valeur pour forcer un rebuild)
+ARG CACHEBUST=2
+
 # Copie du code source
 COPY . .
 
