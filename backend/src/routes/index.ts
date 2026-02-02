@@ -43,13 +43,13 @@ authRoutes.post('/login',
 // Login client - demande OTP
 authRoutes.post('/customer/request-otp',
   validateBody(schemas.auth.customerLoginRequest),
-  authController.customerRequestOtp
+  authController.requestOtp
 );
 
 // Login client - vérifier OTP
 authRoutes.post('/customer/verify-otp',
   validateBody(schemas.auth.customerLoginVerify),
-  authController.customerVerifyOtp
+  authController.verifyOtp
 );
 
 // Refresh token
@@ -74,13 +74,13 @@ authRoutes.put('/password',
 // Reset password - demande
 authRoutes.post('/reset-password/request',
   validateBody(schemas.auth.resetPasswordRequest),
-  authController.resetPasswordRequest
+  authController.requestPasswordReset
 );
 
 // Reset password - confirmer
 authRoutes.post('/reset-password/confirm',
   validateBody(schemas.auth.resetPassword),
-  authController.resetPasswordConfirm
+  authController.resetPassword
 );
 
 // Profil utilisateur connecté
