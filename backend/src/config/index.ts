@@ -20,10 +20,17 @@ const envSchema = z.object({
   API_URL: z.string().url().default('http://localhost:3000'),
   
   // Base de données
-  DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
+  DATABASE_URL: z.string().optional(),
+  POSTGRES_USER: z.string().optional(),
+  POSTGRES_PASSWORD: z.string().optional(),
+  POSTGRES_DB: z.string().optional(),
+  POSTGRES_HOST: z.string().optional(),
+  POSTGRES_PORT: z.string().optional(),
   
   // Redis
-  REDIS_URL: z.string().default('redis://localhost:6379'),
+  REDIS_URL: z.string().optional(),
+  REDIS_HOST: z.string().optional(),
+  REDIS_PORT: z.string().optional(),
   
   // JWT
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
@@ -89,15 +96,26 @@ export const config = {
   apiUrl: env.API_URL,
   version: '3.0.0',
   
-  // Base de données
+  // Base de données - construit l'URL à partir des variables séparées si DATABASE_URL n'est pas défini
   database: {
-    url: env.DATABASE_URL,
+    url: env.DATABASE_URL || (() => {
+      const user = env.POSTGRES_USER || 'awid_admin';
+      const password = encodeURIComponent(env.POSTGRES_PASSWORD || '');
+      const host = env.POSTGRES_HOST || 'postgres';
+      const port = env.POSTGRES_PORT || '5432';
+      const db = env.POSTGRES_DB || 'awid_v3';
+      return `postgresql://${user}:${password}@${host}:${port}/${db}`;
+    })(),
     poolSize: env.NODE_ENV === 'production' ? 20 : 5,
   },
   
-  // Redis
+  // Redis - construit l'URL à partir des variables séparées si REDIS_URL n'est pas défini
   redis: {
-    url: env.REDIS_URL,
+    url: env.REDIS_URL || (() => {
+      const host = env.REDIS_HOST || 'redis';
+      const port = env.REDIS_PORT || '6379';
+      return `redis://${host}:${port}`;
+    })(),
   },
   
   // JWT
