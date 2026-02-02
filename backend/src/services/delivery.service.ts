@@ -906,17 +906,4 @@ export const deliveryService = {
   collectDebt,
 };
 
-export class DeliveryService {
-  static list = listDeliveries;
-  static getById = getDeliveryById;
-  static getDelivererRoute = getDelivererRoute;
-  static assign = assignDeliveries;
-  static updateStatus = updateDeliveryStatus;
-  static complete = completeDelivery;
-  static fail = failDelivery;
-  static optimize = optimizeRoute;
-  static updateDelivererPosition = updateDelivererPosition;
-  static collectDebt = collectDebt;
-}
-
 export default deliveryService;
