@@ -371,7 +371,7 @@ export class CustomerApiController {
           quantity: orderItems.quantity,
           unitPrice: orderItems.unitPrice,
       totalPrice: orderItems.totalPrice,
-          discount: 
+          discount: orderItems.discount,
           lineTotal: orderItems.totalPrice,
           note: orderItems.notes,
         })

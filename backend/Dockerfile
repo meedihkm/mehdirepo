@@ -20,8 +20,8 @@ COPY . .
 # Supprimer les anciens fichiers compilés pour forcer une recompilation complète
 RUN rm -rf dist
 
-# Build TypeScript avec affichage des erreurs
-RUN npm run build 2>&1 | tee build.log || (cat build.log && exit 1)
+# Build TypeScript - Échouer si erreurs
+RUN npm run build
 
 # Vérification que les fichiers sont créés
 RUN ls -la dist/controllers/organization.controller.js || (echo "ERREUR: organization.controller.js non généré" && cat build.log && exit 1)
