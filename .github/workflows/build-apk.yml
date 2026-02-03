@@ -1,0 +1,68 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'mobile/**'
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+        
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Cache Flutter dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.pub-cache
+          mobile/.dart_tool
+        key: ${{ runner.os }}-flutter-${{ hashFiles('mobile/pubspec.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-flutter-
+          
+    - name: Get dependencies
+      working-directory: mobile
+      run: flutter pub get
+      
+    - name: Build APK
+      working-directory: mobile
+      run: |
+        flutter build apk --release \
+          --target-platform android-arm64 \
+          --dart-define=API_URL=http://62.171.130.92:3500/api/v1
+          
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: awid-apk-release
+        path: mobile/build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 30
+        
+    - name: Create Release
+      if: github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: apk-v${{ github.run_number }}
+        name: AWID APK Build ${{ github.run_number }}
+        files: mobile/build/app/outputs/flutter-apk/app-release.apk
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
