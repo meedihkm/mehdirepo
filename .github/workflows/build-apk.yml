@@ -5,12 +5,16 @@ on:
     branches: [ main ]
     paths:
       - 'mobile/**'
+      - '.github/workflows/build-apk.yml'
   workflow_dispatch:
 
 jobs:
   build-client-apk:
     name: Build Client APK
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile/client
     
     steps:
     - name: Checkout code
@@ -28,30 +32,21 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         
-    - name: Cache Flutter dependencies
+    - name: Cache dependencies
       uses: actions/cache@v4
       with:
         path: |
           ~/.pub-cache
           mobile/client/.dart_tool
-        key: ${{ runner.os }}-flutter-client-${{ hashFiles('mobile/client/pubspec.yaml') }}
+        key: ${{ runner.os }}-flutter-client-${{ hashFiles('mobile/client/pubspec.yaml', 'mobile/shared/pubspec.yaml') }}
         
-    - name: Get dependencies (shared)
-      working-directory: mobile/shared
+    - name: Get dependencies
       run: flutter pub get
       
-    - name: Get dependencies (client)
-      working-directory: mobile/client
-      run: flutter pub get
-      
-    - name: Build Client APK
-      working-directory: mobile/client
-      run: |
-        flutter build apk --release \
-          --target-platform android-arm64 \
-          --dart-define=API_URL=http://62.171.130.92:3500/api/v1
+    - name: Build APK
+      run: flutter build apk --release --target-platform android-arm64
           
-    - name: Upload Client APK
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: awid-client-apk
@@ -61,6 +56,9 @@ jobs:
   build-livreur-apk:
     name: Build Livreur APK
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile/livreur
     
     steps:
     - name: Checkout code
@@ -78,30 +76,21 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         
-    - name: Cache Flutter dependencies
+    - name: Cache dependencies
       uses: actions/cache@v4
       with:
         path: |
           ~/.pub-cache
           mobile/livreur/.dart_tool
-        key: ${{ runner.os }}-flutter-livreur-${{ hashFiles('mobile/livreur/pubspec.yaml') }}
+        key: ${{ runner.os }}-flutter-livreur-${{ hashFiles('mobile/livreur/pubspec.yaml', 'mobile/shared/pubspec.yaml') }}
         
-    - name: Get dependencies (shared)
-      working-directory: mobile/shared
+    - name: Get dependencies
       run: flutter pub get
       
-    - name: Get dependencies (livreur)
-      working-directory: mobile/livreur
-      run: flutter pub get
-      
-    - name: Build Livreur APK
-      working-directory: mobile/livreur
-      run: |
-        flutter build apk --release \
-          --target-platform android-arm64 \
-          --dart-define=API_BASE_URL=http://62.171.130.92:3500/api/v1
+    - name: Build APK
+      run: flutter build apk --release --target-platform android-arm64
           
-    - name: Upload Livreur APK
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: awid-livreur-apk
@@ -129,8 +118,9 @@ jobs:
         
     - name: Rename APKs
       run: |
-        mv ./apks/app-release.apk ./apks/awid-client-v${{ github.run_number }}.apk
-        mv ./apks/app-release.apk ./apks/awid-livreur-v${{ github.run_number }}.apk
+        cd ./apks
+        ls -la
+        mv app-release.apk awid-client.apk 2>/dev/null || true
       continue-on-error: true
         
     - name: Create Release
