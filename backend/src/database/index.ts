@@ -1,10 +1,10 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 // AWID v3.0 - CONNEXION BASE DE DONNÉES
-// PostgreSQL avec Drizzle ORM
+// PostgreSQL avec Drizzle ORM (via node-postgres)
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
 import { config } from '../config';
 import { logger } from '../utils/logger';
 import * as schema from './schema';
@@ -13,28 +13,28 @@ import * as schema from './schema';
 // CONNEXION POSTGRESQL
 // ═══════════════════════════════════════════════════════════════════════════════
 
-let client: ReturnType<typeof postgres>;
+let pool: Pool;
 let db: ReturnType<typeof drizzle>;
 
 export const initializeDatabase = async (): Promise<void> => {
   try {
-    // Créer la connexion
-    client = postgres(config.database.url, {
+    // Créer le pool de connexions
+    pool = new Pool({
+      connectionString: config.database.url,
       max: config.database.poolSize,
-      idle_timeout: 20,
-      connect_timeout: 10,
-      onnotice: () => {}, // Ignorer les notices
-    });
-
-    // Initialiser Drizzle
-    db = drizzle(client, { 
-      schema,
-      logger: config.env === 'development',
+      idleTimeoutMillis: 20000,
+      connectionTimeoutMillis: 10000,
     });
 
     // Tester la connexion
-    await client`SELECT 1`;
+    await pool.query('SELECT 1');
     logger.info('Database connection established');
+
+    // Initialiser Drizzle
+    db = drizzle(pool, { 
+      schema,
+      logger: config.env === 'development',
+    });
 
   } catch (error) {
     logger.error('Failed to connect to database:', error);
@@ -43,13 +43,13 @@ export const initializeDatabase = async (): Promise<void> => {
 };
 
 export const closeDatabase = async (): Promise<void> => {
-  if (client) {
-    await client.end();
+  if (pool) {
+    await pool.end();
     logger.info('Database connection closed');
   }
 };
 
-export { db, client };
+export { db, pool };
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // UTILITAIRE: Transaction
@@ -66,10 +66,11 @@ export const transaction = async <T>(
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const raw = async <T = any>(
-  sql: TemplateStringsArray,
+  sql: string,
   ...values: any[]
 ): Promise<T[]> => {
-  return client(sql, ...values) as Promise<T[]>;
+  const result = await pool.query(sql, values);
+  return result.rows;
 };
 
-export default { initializeDatabase, closeDatabase, db, client, transaction, raw };
+export default { initializeDatabase, closeDatabase, db, pool, transaction, raw };

@@ -2,8 +2,8 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Installation des dépendances système
-RUN apk add --no-cache wget
+# Installation des dépendances système (libpq pour node-postgres)
+RUN apk add --no-cache wget postgresql-libs postgresql-dev build-base python3
 
 # Copie des fichiers de dépendances
 COPY package*.json ./
@@ -12,7 +12,7 @@ COPY package*.json ./
 RUN npm install
 
 # Argument pour invalider le cache (changer la valeur pour forcer un rebuild)
-ARG CACHEBUST=2
+ARG CACHEBUST=3
 
 # Copie du code source
 COPY . .
