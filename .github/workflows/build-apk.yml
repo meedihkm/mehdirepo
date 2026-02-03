@@ -1,4 +1,4 @@
-name: Build APK
+name: Build APKs
 
 on:
   push:
@@ -8,7 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-apk:
+  build-client-apk:
+    name: Build Client APK
     runs-on: ubuntu-latest
     
     steps:
@@ -32,36 +33,120 @@ jobs:
       with:
         path: |
           ~/.pub-cache
-          mobile/.dart_tool
-        key: ${{ runner.os }}-flutter-${{ hashFiles('mobile/pubspec.yaml') }}
-        restore-keys: |
-          ${{ runner.os }}-flutter-
-          
-    - name: Get dependencies
-      working-directory: mobile
+          mobile/client/.dart_tool
+        key: ${{ runner.os }}-flutter-client-${{ hashFiles('mobile/client/pubspec.yaml') }}
+        
+    - name: Get dependencies (shared)
+      working-directory: mobile/shared
       run: flutter pub get
       
-    - name: Build APK
-      working-directory: mobile
+    - name: Get dependencies (client)
+      working-directory: mobile/client
+      run: flutter pub get
+      
+    - name: Build Client APK
+      working-directory: mobile/client
       run: |
         flutter build apk --release \
           --target-platform android-arm64 \
           --dart-define=API_URL=http://62.171.130.92:3500/api/v1
           
-    - name: Upload APK
+    - name: Upload Client APK
       uses: actions/upload-artifact@v4
       with:
-        name: awid-apk-release
-        path: mobile/build/app/outputs/flutter-apk/app-release.apk
+        name: awid-client-apk
+        path: mobile/client/build/app/outputs/flutter-apk/app-release.apk
         retention-days: 30
+
+  build-livreur-apk:
+    name: Build Livreur APK
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.24.0'
+        channel: 'stable'
+        
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Cache Flutter dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.pub-cache
+          mobile/livreur/.dart_tool
+        key: ${{ runner.os }}-flutter-livreur-${{ hashFiles('mobile/livreur/pubspec.yaml') }}
+        
+    - name: Get dependencies (shared)
+      working-directory: mobile/shared
+      run: flutter pub get
+      
+    - name: Get dependencies (livreur)
+      working-directory: mobile/livreur
+      run: flutter pub get
+      
+    - name: Build Livreur APK
+      working-directory: mobile/livreur
+      run: |
+        flutter build apk --release \
+          --target-platform android-arm64 \
+          --dart-define=API_BASE_URL=http://62.171.130.92:3500/api/v1
+          
+    - name: Upload Livreur APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: awid-livreur-apk
+        path: mobile/livreur/build/app/outputs/flutter-apk/app-release.apk
+        retention-days: 30
+
+  create-release:
+    name: Create Release
+    needs: [build-client-apk, build-livreur-apk]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Download Client APK
+      uses: actions/download-artifact@v4
+      with:
+        name: awid-client-apk
+        path: ./apks
+        
+    - name: Download Livreur APK
+      uses: actions/download-artifact@v4
+      with:
+        name: awid-livreur-apk
+        path: ./apks
+        
+    - name: Rename APKs
+      run: |
+        mv ./apks/app-release.apk ./apks/awid-client-v${{ github.run_number }}.apk
+        mv ./apks/app-release.apk ./apks/awid-livreur-v${{ github.run_number }}.apk
+      continue-on-error: true
         
     - name: Create Release
-      if: github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: apk-v${{ github.run_number }}
-        name: AWID APK Build ${{ github.run_number }}
-        files: mobile/build/app/outputs/flutter-apk/app-release.apk
+        tag_name: v${{ github.run_number }}
+        name: AWID v${{ github.run_number }}
+        body: |
+          ## APKs AWID v3.0
+          
+          **Backend:** http://62.171.130.92:3500
+          
+          ### Applications
+          - 📱 **Client** - Application pour les clients
+          - 🚚 **Livreur** - Application pour les livreurs
+        files: ./apks/*.apk
         draft: false
         prerelease: false
       env:

@@ -15,7 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const String _baseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'http://localhost:3000/api/v1',
+  defaultValue: 'http://62.171.130.92:3500/api/v1',
 );
 
 const Duration _connectTimeout = Duration(seconds: 30);

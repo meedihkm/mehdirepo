@@ -13,14 +13,14 @@ class AppConfig {
     'API_BASE_URL',
     defaultValue: kReleaseMode 
       ? 'https://api.awid.dz/v1'  // Production
-      : 'http://localhost:3000/v1', // Développement
+      : 'http://62.171.130.92:3500/api/v1', // VPS Production
   );
 
   static const String wsBaseUrl = String.fromEnvironment(
     'WS_BASE_URL',
     defaultValue: kReleaseMode
       ? 'wss://api.awid.dz/ws'
-      : 'ws://localhost:3000/ws',
+      : 'ws://62.171.130.92:3500/ws',
   );
 
   // ═══════════════════════════════════════════════════════════════════════════

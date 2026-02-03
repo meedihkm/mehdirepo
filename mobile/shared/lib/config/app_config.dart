@@ -34,7 +34,7 @@ class AppConfig {
         // Développement local
         return const String.fromEnvironment(
           'API_URL',
-          defaultValue: 'http://10.0.2.2:3000/api', // Android emulator
+          defaultValue: 'http://62.171.130.92:3500/api/v1', // VPS Production
         );
     }
   }
